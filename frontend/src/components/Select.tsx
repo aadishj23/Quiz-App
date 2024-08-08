@@ -2,7 +2,7 @@ import React from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Select() {
