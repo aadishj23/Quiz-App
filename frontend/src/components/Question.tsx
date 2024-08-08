@@ -7,7 +7,7 @@ import { nanoid } from "nanoid"
 function Question() {
     const dataStore = useRecoilValue(datastore)
     const datafinal= dataStore.map(dataval=> {
-        return <SingleQuestion question={dataval.question} key={nanoid()}/>
+        return <SingleQuestion question={dataval.question} answers={dataval.answers} key={nanoid()}/>
     })
   return (
     <div>

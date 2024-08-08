@@ -2,12 +2,14 @@ import React from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Select() {
     const [data, setData] = useRecoilState(datainput)
     const setDataStore = useSetRecoilState(datastore)
+
+    const navigate = useNavigate();
 
     function handleChange(event:any){
         const {name,value}=event.target;
@@ -28,56 +30,51 @@ function Select() {
         })  
         const datares=fetcheddata.data
         setDataStore(datares)
+        navigate('/question')
         console.log(datares)
     }
 
-    React.useEffect(()=>{
-        handleSubmit
-    },[data])
-
-  return (
-    <div>
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="category"> Select Category </label>
-                <select value={data.category} name='category' id="category" onChange={handleChange}>
-                    <option value="">Any Category</option>
-                    <option value="linux">Linux</option>
-                    <option value="bash">Bash</option>
-                    <option value="uncategorized">Uncategorized</option>
-                    <option value="docker">Docker</option>
-                    <option value="sql">SQL</option>
-                    <option value="cms">CMS</option>
-                    <option value="code">Code</option>
-                    <option value="devops">DevOps</option>
-            </select>
-            </div>
-            <div>
-                <label htmlFor="difficulty"> Select Difficulty </label>
-                <select value={data.difficulty} name='difficulty' id="difficulty" onChange={handleChange}>
-                    <option value="">Any Difficulty</option>
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
+    return (
+        <div>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="category"> Select Category </label>
+                    <select value={data.category} name='category' id="category" onChange={handleChange}>
+                        <option value="">Any Category</option>
+                        <option value="linux">Linux</option>
+                        <option value="bash">Bash</option>
+                        <option value="uncategorized">Uncategorized</option>
+                        <option value="docker">Docker</option>
+                        <option value="sql">SQL</option>
+                        <option value="cms">CMS</option>
+                        <option value="code">Code</option>
+                        <option value="devops">DevOps</option>
                 </select>
-            </div>
-            <div>
-                <label htmlFor="questioncount"> Number of Questions </label>
-                <input 
-                    type="text" 
-                    id="questioncount"
-                    placeholder='Number of Questions'
-                    name="questioncount"
-                    value={data.questioncount}
-                    onChange={handleChange}
-                />
-            </div>
-            <Link to='/question'>
+                </div>
+                <div>
+                    <label htmlFor="difficulty"> Select Difficulty </label>
+                    <select value={data.difficulty} name='difficulty' id="difficulty" onChange={handleChange}>
+                        <option value="">Any Difficulty</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="questioncount"> Number of Questions </label>
+                    <input 
+                        type="text" 
+                        id="questioncount"
+                        placeholder='Number of Questions'
+                        name="questioncount"
+                        value={data.questioncount}
+                        onChange={handleChange}
+                    />
+                </div>
                 <input type='submit' />
-            </Link>
-        </form>
-    </div>
-  )
+            </form>
+        </div>
+    )
 }
 
 export default Select
