@@ -1,13 +1,15 @@
 import React from 'react'
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { datainput } from '../store/atoms/data';
+import { datastore } from '../store/atoms/datastore';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 function Select() {
-    const [data, setData]= React.useState({
-        category: " ",
-        difficulty: " ",
-        questioncount: " "
-    })
+    const [data, setData] = useRecoilState(datainput)
+    const setDataStore = useSetRecoilState(datastore)
 
-    function handleChange(event){
+    function handleChange(event:any){
         const {name,value}=event.target;
         setData(prevData => {
             return {
@@ -17,9 +19,21 @@ function Select() {
         })
     }
 
-    function handleSubmit(event){
+    async function handleSubmit(event:any){
         event.preventDefault();
+        const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1"
+        const fetcheddata = await axios({
+            url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
+            method: "GET"
+        })  
+        const datares=fetcheddata.data
+        setDataStore(datares)
+        console.log(datares)
     }
+
+    React.useEffect(()=>{
+        handleSubmit
+    },[data])
 
   return (
     <div>
@@ -58,6 +72,9 @@ function Select() {
                     onChange={handleChange}
                 />
             </div>
+            <Link to='/question'>
+                <input type='submit' />
+            </Link>
         </form>
     </div>
   )

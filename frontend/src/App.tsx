@@ -1,5 +1,7 @@
 import Firstpage from "./components/Firstpage"
 import Select from "./components/Select"
+import Question from "./components/Question"
+import { RecoilRoot } from "recoil"
 import { createBrowserRouter,RouterProvider } from "react-router-dom"
 
 function App() {
@@ -10,7 +12,17 @@ function App() {
     },
     {
       path: '/select',
-      element: <Select />
+      element: 
+        <RecoilRoot>
+          <Select />
+        </RecoilRoot>
+    },
+    {
+      path: '/question',
+      element:
+        <RecoilRoot>
+          <Question />
+        </RecoilRoot>
     }
   ])
   return (
