@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
@@ -31,7 +31,6 @@ function Select() {
         const datares=fetcheddata.data
         setDataStore(datares)
         navigate('/question')
-        console.log(datares)
     }
 
     return (
