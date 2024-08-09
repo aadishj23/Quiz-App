@@ -32,6 +32,7 @@ function Select() {
 			url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
 			method: "GET",
 		});
+		console.log("fetchedData is ", fetchedData);
 		const datares = fetchedData.data;
 		setDataStore(datares);
 		navigate("/question");
