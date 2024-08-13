@@ -1,3 +1,85 @@
+// // import React from 'react'
+// import { useRecoilState, useSetRecoilState } from 'recoil';
+// import { datainput } from '../store/atoms/data';
+// import { datastore } from '../store/atoms/datastore';
+// import { useNavigate } from 'react-router-dom';
+// import axios from 'axios';
+
+// function Select() {
+//     const [data, setData] = useRecoilState(datainput)
+//     const setDataStore = useSetRecoilState(datastore)
+
+//     const navigate = useNavigate();
+
+//     function handleChange(event:any){
+//         const {name,value}=event.target;
+//         setData(prevData => {
+//             return {
+//                 ...prevData,
+//                 [name]:value
+//             }
+//         })
+//     }
+
+//     async function handleSubmit(event:any){
+//         event.preventDefault();
+//         const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1"
+//         const fetcheddata = await axios({
+//             url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
+//             method: "GET"
+//         })  
+//         const datares=fetcheddata.data
+//         setDataStore(datares)
+//         navigate('/question')
+//     }
+
+//     return (
+//         <div>
+//             <h1 className='mt-[280px] font-bold text-7xl'>Quizzical</h1>
+//             <form onSubmit={handleSubmit}>
+//                 <div>
+//                     <label htmlFor="category"> Select Category </label>
+//                     <select value={data.category} name='category' id="category" onChange={handleChange}>
+//                         <option value="">Any Category</option>
+//                         <option value="linux">Linux</option>
+//                         <option value="bash">Bash</option>
+//                         <option value="uncategorized">Uncategorized</option>
+//                         <option value="docker">Docker</option>
+//                         <option value="sql">SQL</option>
+//                         <option value="cms">CMS</option>
+//                         <option value="code">Code</option>
+//                         <option value="devops">DevOps</option>
+//                 </select>
+//                 </div>
+//                 <div>
+//                     <label htmlFor="difficulty"> Select Difficulty </label>
+//                     <select value={data.difficulty} name='difficulty' id="difficulty" onChange={handleChange}>
+//                         <option value="">Any Difficulty</option>
+//                         <option value="Easy">Easy</option>
+//                         <option value="Medium">Medium</option>
+//                         <option value="Hard">Hard</option>
+//                     </select>
+//                 </div>
+//                 <div>
+//                     <label htmlFor="questioncount"> Number of Questions </label>
+//                     <input 
+//                         type="text" 
+//                         id="questioncount"
+//                         placeholder='Number of Questions'
+//                         name="questioncount"
+//                         value={data.questioncount}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <input type='submit' value='Start Quiz'/>
+//             </form>
+//         </div>
+//     )
+// }
+
+// export default Select
+
+
 // import React from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
@@ -6,39 +88,45 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Select() {
-    const [data, setData] = useRecoilState(datainput)
-    const setDataStore = useSetRecoilState(datastore)
-
+    const [data, setData] = useRecoilState(datainput);
+    const setDataStore = useSetRecoilState(datastore);
     const navigate = useNavigate();
 
-    function handleChange(event:any){
-        const {name,value}=event.target;
-        setData(prevData => {
-            return {
-                ...prevData,
-                [name]:value
-            }
-        })
+    function handleChange(event: any) {
+        const { name, value } = event.target;
+        setData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     }
 
-    async function handleSubmit(event:any){
+    async function handleSubmit(event: any) {
         event.preventDefault();
-        const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1"
-        const fetcheddata = await axios({
+        const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1";
+        const fetchedData = await axios({
             url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
-            method: "GET"
-        })  
-        const datares=fetcheddata.data
-        setDataStore(datares)
-        navigate('/question')
+            method: "GET",
+        });
+        const dataRes = fetchedData.data;
+        setDataStore(dataRes);
+        navigate('/question');
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="category"> Select Category </label>
-                    <select value={data.category} name='category' id="category" onChange={handleChange}>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+            <h1 className="mb-8 text-7xl font-bold text-blue-600">Quizzical</h1>
+            <form onSubmit={handleSubmit} className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+                <div className="mb-4">
+                    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">
+                        Select Category
+                    </label>
+                    <select
+                        value={data.category}
+                        name="category"
+                        id="category"
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                    >
                         <option value="">Any Category</option>
                         <option value="linux">Linux</option>
                         <option value="bash">Bash</option>
@@ -48,32 +136,47 @@ function Select() {
                         <option value="cms">CMS</option>
                         <option value="code">Code</option>
                         <option value="devops">DevOps</option>
-                </select>
+                    </select>
                 </div>
-                <div>
-                    <label htmlFor="difficulty"> Select Difficulty </label>
-                    <select value={data.difficulty} name='difficulty' id="difficulty" onChange={handleChange}>
+                <div className="mb-4">
+                    <label htmlFor="difficulty" className="block mb-2 text-sm font-medium text-gray-700">
+                        Select Difficulty
+                    </label>
+                    <select
+                        value={data.difficulty}
+                        name="difficulty"
+                        id="difficulty"
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                    >
                         <option value="">Any Difficulty</option>
                         <option value="Easy">Easy</option>
                         <option value="Medium">Medium</option>
                         <option value="Hard">Hard</option>
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="questioncount"> Number of Questions </label>
-                    <input 
-                        type="text" 
+                <div className="mb-4">
+                    <label htmlFor="questioncount" className="block mb-2 text-sm font-medium text-gray-700">
+                        Number of Questions
+                    </label>
+                    <input
+                        type="text"
                         id="questioncount"
-                        placeholder='Number of Questions'
+                        placeholder="Number of Questions"
                         name="questioncount"
                         value={data.questioncount}
                         onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
                     />
                 </div>
-                <input type='submit' />
+                <input
+                    type="submit"
+                    value="Start Quiz"
+                    className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
+                />
             </form>
         </div>
-    )
+    );
 }
 
-export default Select
+export default Select;

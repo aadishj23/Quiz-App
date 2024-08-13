@@ -1,4 +1,3 @@
-import Firstpage from "./components/Firstpage"
 import Select from "./components/Select"
 import Question from "./components/Question"
 import { RecoilRoot } from "recoil"
@@ -7,11 +6,7 @@ import { createBrowserRouter,RouterProvider } from "react-router-dom"
 function App() {
   const router = createBrowserRouter([
     {
-      path:'/',
-      element: <Firstpage />
-    },
-    {
-      path: '/select',
+      path: '/',
       element: 
         <RecoilRoot>
           <Select />
