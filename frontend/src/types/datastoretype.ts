@@ -13,6 +13,6 @@ export interface Data {
     tip: string | null;
     selected_answer?: string | null;
     is_correct?: boolean;
-    is_held?: Record<string, boolean>;
-    answer_id?: Record<string, string>;
+    is_held: Record<string, boolean>;
+    // answer_id?: Record<string, string>;
 }

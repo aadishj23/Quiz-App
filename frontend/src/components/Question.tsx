@@ -2,11 +2,14 @@ import React from 'react'
 import { useRecoilState } from "recoil"
 import { datastore } from "../store/atoms/datastore"
 import SingleQuestion from "./SingleQuestion"
-import { nanoid } from "nanoid"
-// import { Data } from '../types/datastoretype'
+// import { nanoid } from "nanoid"
+import { submit } from '../store/atoms/submit'
+import { useNavigate } from 'react-router-dom'
 
 function Question() {
     const [dataStore, setDataStore] = useRecoilState(datastore)
+    const [submitState, setSubmitState] = useRecoilState(submit)
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         const dataWithHeld= dataStore.map(dataWithoutHeld => ({
@@ -21,16 +24,15 @@ function Question() {
               answer_e_held: false,
               answer_f_held: false,
             },
-            answer_id:{
-              answer_a_id: nanoid(),
-              answer_b_id: nanoid(),
-              answer_c_id: nanoid(),
-              answer_d_id: nanoid(),
-              answer_e_id: nanoid(),
-              answer_f_id: nanoid(),
-            }
+            // answer_id:{
+            //   answer_a_id: nanoid(),
+            //   answer_b_id: nanoid(),
+            //   answer_c_id: nanoid(),
+            //   answer_d_id: nanoid(),
+            //   answer_e_id: nanoid(),
+            //   answer_f_id: nanoid(),
+            // }
         }));
-        // console.log(dataWithHeld);
         setDataStore(dataWithHeld);
     }, [setDataStore]);
     console.log(dataStore)
@@ -41,10 +43,14 @@ function Question() {
           prevheld.id === id
             ? { ...prevheld, 
               selected_answer: answerkey,
-              is_held: {
-                ...prevheld.is_held ,
-                [`${answerkey}_held`]: !prevheld.is_held[`${answerkey}_held`],
-              },
+              is_held: Object.fromEntries(
+                Object.keys(prevheld.is_held || {}).map(key => [
+                  key,
+                  key === `${answerkey}_held`
+                    ? !prevheld.is_held?.[key]
+                    : false,
+                ])
+              ),
             }
             : prevheld
         )
@@ -66,6 +72,24 @@ function Question() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
         {datafinal}
+        { submitState === false ? 
+          (<button 
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
+            onClick={() => setSubmitState(true)}
+          >
+            Submit
+          </button> )
+          : 
+          (<button 
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
+            onClick={() => {
+              setSubmitState(false)
+              navigate('/')
+            }}
+          >
+            Home
+          </button> )
+        }
     </div>
   )
 }
