@@ -32,24 +32,25 @@ function Question() {
         }));
         // console.log(dataWithHeld);
         setDataStore(dataWithHeld);
-    }, []);
+    }, [setDataStore]);
     console.log(dataStore)
 
-    // const handleClick = (id: number, answerid : string) => {
-    //   setDataStore(prevStore =>
-    //     prevStore.map(prevheld =>
-    //       prevheld.id === id
-    //         ? { ...prevheld, 
-    //             answers : prevheld.answers.map(prevOption =>
-    //               prevOption.id === answerid
-    //                 ? { ...prevOption, isHeld: !prevOption.isHeld }
-    //                 : prevOption
-    //             )
-    //         }
-    //         : prevheld
-    //     )
-    //   );
-    // };
+    const handleClick = (id: number, answerkey : string) => {
+      setDataStore(prevStore =>
+        prevStore.map(prevheld =>
+          prevheld.id === id
+            ? { ...prevheld, 
+              selected_answer: answerkey,
+              is_held: {
+                ...prevheld.is_held ,
+                [`${answerkey}_held`]: !prevheld.is_held[`${answerkey}_held`],
+              },
+            }
+            : prevheld
+        )
+      );
+      console.log(dataStore)
+    };
 
     const datafinal= dataStore.map(dataval=> {
         return (
@@ -57,7 +58,7 @@ function Question() {
             question={dataval.question} 
             answers={dataval.answers} 
             key={dataval.id} 
-            // onclick={(answerid : string) => handleClick(dataval.id,answerid)}
+            onclick={(answerkey : string) => handleClick(dataval.id,answerkey)}
             className="p-4 bg-white shadow-md rounded-md mb-4"
          />)
     })

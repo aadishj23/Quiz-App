@@ -8,17 +8,28 @@ import { nanoid } from "nanoid"
 function SingleQuestion(props:any) {
   const dataStore = useRecoilValue<Data[]>(datastore)
   
-  const styles={
-    backgroundColor: props.is_held ? "#59E391":"#FFFFFF"
-  }
+  // const styles={
+  //   backgroundColor: dataStore.is_held[] ? "#59E391":"#FFFFFF"
+  // }
 
   return (
     <div>
       {props.question}
       <br></br>
-      { Object.entries(props.answers).map(([key, value]) => {
+      {Object.entries(props.answers).map(([key, value]) => {
         return (
-          <button className='m-[15px]' key={nanoid()} >{value}</button>
+          value && (
+            <button 
+              className='m-[15px]' 
+              key={nanoid()}
+              onClick={() => props.onclick(key)} 
+              // style={{
+              //   backgroundColor: dataStore.is_held[`${key}_held`] ? "#59E391" : "#FFFFFF"
+              // }}
+            >
+              {value as React.ReactNode}
+            </button>
+          )
         )
       })}
       <br></br>
