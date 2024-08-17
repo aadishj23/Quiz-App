@@ -2,7 +2,6 @@ import React from 'react'
 import { useRecoilState } from "recoil"
 import { datastore } from "../store/atoms/datastore"
 import SingleQuestion from "./SingleQuestion"
-// import { nanoid } from "nanoid"
 import { submit } from '../store/atoms/submit'
 import { useNavigate } from 'react-router-dom'
 
@@ -24,14 +23,6 @@ function Question() {
               answer_e_held: false,
               answer_f_held: false,
             },
-            // answer_id:{
-            //   answer_a_id: nanoid(),
-            //   answer_b_id: nanoid(),
-            //   answer_c_id: nanoid(),
-            //   answer_d_id: nanoid(),
-            //   answer_e_id: nanoid(),
-            //   answer_f_id: nanoid(),
-            // }
         }));
         setDataStore(dataWithHeld);
     }, [setDataStore]);
@@ -75,7 +66,14 @@ function Question() {
         { submitState === false ? 
           (<button 
             className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
-            onClick={() => setSubmitState(true)}
+            onClick={() => {
+              const unansweredQuestions = dataStore.filter(question => question.selected_answer === null);
+              if (unansweredQuestions.length === 0) {
+                setSubmitState(true);
+              } else {
+                alert("Please answer all questions before submitting.");
+              }
+            }}
           >
             Submit
           </button> )
@@ -83,8 +81,8 @@ function Question() {
           (<button 
             className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
             onClick={() => {
-              setSubmitState(false)
-              navigate('/')
+              setSubmitState(false);
+              navigate('/');
             }}
           >
             Home

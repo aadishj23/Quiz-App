@@ -11,7 +11,9 @@ function SingleQuestion(props:any) {
   
   return (
     <div className="p-4">
-      <p></p>{props.question}
+      <p className="font-semibold text-lg mb-4">Question {props.questionNumber}</p> 
+      {/* add the question number later when sql is connected */}
+      {props.question}
       <br></br>
       {Object.entries(props.answers).map(([key, value]) => {
         return (
@@ -25,7 +27,7 @@ function SingleQuestion(props:any) {
                  :
                  (
                   dataStore.some((item) => item.is_held?.[`${key}_held`] && item.question === props.question)
-                    ? (dataStore.some((item) => item.selected_answer === key && item.correct_answers[key] === "true")
+                    ? (dataStore.some((item) => item.selected_answer === key && item.correct_answers[`${key}_correct`] === "true")
                       ? "bg-green-500 border-green-500 text-white"
                       : "bg-red-500 border-red-500 text-white")
                     : ("bg-[#FFFFFF] border-gray-300")
