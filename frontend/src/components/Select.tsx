@@ -2,11 +2,13 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
+import { loggedin } from '../store/atoms/loggedin';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Select() {
     const [data, setData] = useRecoilState(datainput);
+    const [isLoggedin,setLoggedIn] = useRecoilState(loggedin);
     const setDataStore = useSetRecoilState(datastore);
     const navigate = useNavigate();
 
@@ -30,22 +32,57 @@ function Select() {
         navigate('/question');
     }
 
-    async function getData(){
-        const response= await axios({
-            url: "http://localhost:5000/api/quiz",
-            method: "POST",
-            data: {
-                category: data.category,
-                difficulty: data.difficulty,
-                questioncount: data.questioncount,
-            },
-        });
-        // setDataStore(response.data);
+    function handleSignin() {
+        navigate('/signin');
     }
+
+    function handleSignup() {
+        navigate('/signup');
+    }
+
+    // async function getData(){
+    //     const response= await axios({
+    //         url: "http://localhost:3000/updatedata",
+    //         method: "POST",
+    //         data: JSON.stringify({
+    //             category: data.category,
+    //             difficulty: data.difficulty,
+    //             questioncount: data.questioncount,
+    //         }),
+    //     });
+    //     // setDataStore(response.data);
+    // }
     
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
+            {isLoggedin === false ? (
+                <div className="absolute top-4 right-4 flex space-x-4">
+                    <button 
+                        onClick={handleSignin} 
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+                    >
+                        Sign In
+                    </button>
+                    <button 
+                        onClick={handleSignup} 
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200"
+                    >
+                        Sign Up
+                    </button>
+                </div>
+            ):(
+                <div className="absolute top-4 right-4 flex space-x-4">
+                    <p className="text-center text-lg font-semibold">Welcome</p>
+                    <button 
+                        onClick={() => {setLoggedIn(false)}}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"
+                    > 
+                        LogOut
+                    </button>
+                </div>
+            )}
+
             <h1 className="mb-8 text-7xl font-bold text-blue-600">Quizzical</h1>
             <form 
                 onSubmit={handleSubmit} 
@@ -104,11 +141,11 @@ function Select() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
                     />
                 </div>
-                <input
-                    type="submit"
-                    value="Start Quiz"
-                    className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
-                />
+                    <input
+                        type="submit"
+                        value="Start Quiz"
+                        className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
+                    />
             </form>
         </div>
     );

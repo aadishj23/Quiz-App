@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import QuizData from './db';
+import {QuizData,User} from './db';
 import fetch from './middlewares/fetch';
 import { Request, Response } from "express";
 
@@ -24,12 +24,31 @@ if (URL) {
 
 app.post('/updatedata', fetch, async (req:Request, res:Response) => {
     await QuizData.create({
+        category: req.body.category,
+        difficulty: req.body.difficulty,
+        questioncount: req.body.questioncount,
         data: req.body.dataRes,
     });
     const data = await QuizData.find({});
     res.send(data);  
 });
 
+app.post('/signup', async (req:Request, res:Response) => {
+    const { name, email, phone, password } = req.body;
+    const user = await User.create({ name, email, phone, password });
+    res.send(user);
+});
+
+app.get('/signin', async (req:Request, res:Response) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (user?.password === password) {
+        res.send(user);
+    } else {
+        res.status(401).send("Invalid email or password");
+    }
+    }
+);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
