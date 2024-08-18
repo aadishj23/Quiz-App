@@ -22,50 +22,41 @@ function Select() {
 
     async function handleSubmit(event: any) {
         event.preventDefault();
-        const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1";
-        const fetchedData = await axios({
-            url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
-            method: "GET",
+        const response= await axios({
+            url: "http://localhost:3000/updatedata",
+            method: "POST",
+            data: JSON.stringify({
+                category: data.category,
+                difficulty: data.difficulty,
+                questioncount: data.questioncount,
+            }),
+            headers: {
+                'Content-Type': 'application/json' 
+            } ,
         });
-        const dataRes = fetchedData.data;
-        setDataStore(dataRes);
+        if (response.data.length > 0) {
+            setDataStore(response.data[0].data);
+        }
+        console.log(response.data[0].data);
         navigate('/question');
     }
-
-    function handleSignin() {
-        navigate('/signin');
-    }
-
-    function handleSignup() {
-        navigate('/signup');
-    }
-
-    // async function getData(){
-    //     const response= await axios({
-    //         url: "http://localhost:3000/updatedata",
-    //         method: "POST",
-    //         data: JSON.stringify({
-    //             category: data.category,
-    //             difficulty: data.difficulty,
-    //             questioncount: data.questioncount,
-    //         }),
-    //     });
-    //     // setDataStore(response.data);
-    // }
-    
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
             {isLoggedin === false ? (
                 <div className="absolute top-4 right-4 flex space-x-4">
                     <button 
-                        onClick={handleSignin} 
+                        onClick={()=>{
+                            navigate('/signin')
+                        }} 
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
                     >
                         Sign In
                     </button>
                     <button 
-                        onClick={handleSignup} 
+                        onClick={()=>{
+                            navigate('/signup')
+                        }} 
                         className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200"
                     >
                         Sign Up
@@ -75,7 +66,10 @@ function Select() {
                 <div className="absolute top-4 right-4 flex space-x-4">
                     <p className="text-center text-lg font-semibold">Welcome</p>
                     <button 
-                        onClick={() => {setLoggedIn(false)}}
+                        onClick={() => {
+                            setLoggedIn(false)
+                            localStorage.removeItem('token')
+                        }}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"
                     > 
                         LogOut
@@ -85,7 +79,7 @@ function Select() {
 
             <h1 className="mb-8 text-7xl font-bold text-blue-600">Quizzical</h1>
             <form 
-                onSubmit={handleSubmit} 
+                onSubmit={handleSubmit}
                 className="w-full max-w-md p-6 bg-white rounded-lg shadow-md"
             >
                 <div className="mb-4">

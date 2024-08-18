@@ -19,18 +19,22 @@ function Signin() {
             }
         })
     }
-    // console.log(signInData)
 
     async function handleSubmitSignIn(event:any){
         event.preventDefault()
-        await axios({
+        const response= await axios({
             url: "http://localhost:3000/signin",
             method: "POST",
             data: JSON.stringify({
                 email: signInData.Name,
                 password: signInData.Password
             }),
+            headers: {
+                'Content-Type': 'application/json' ,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } ,
         });
+        localStorage.setItem('token', response.data.token);
         setLoggedIn(true)
         navigate('/')
     }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRecoilState } from "recoil"
 import { datastore } from "../store/atoms/datastore"
 import SingleQuestion from "./SingleQuestion"
@@ -9,24 +8,6 @@ function Question() {
     const [dataStore, setDataStore] = useRecoilState(datastore)
     const [submitState, setSubmitState] = useRecoilState(submit)
     const navigate = useNavigate();
-
-    React.useEffect(() => {
-        const dataWithHeld= dataStore.map(dataWithoutHeld => ({
-            ...dataWithoutHeld,
-            selected_answer: null,
-            is_correct: false,
-            is_held: {
-              answer_a_held: false,
-              answer_b_held: false,
-              answer_c_held: false,
-              answer_d_held: false,
-              answer_e_held: false,
-              answer_f_held: false,
-            },
-        }));
-        setDataStore(dataWithHeld);
-    }, [setDataStore]);
-    console.log(dataStore)
 
     const handleClick = (id: number, answerkey : string) => {
       setDataStore(prevStore =>
@@ -83,6 +64,8 @@ function Question() {
             onClick={() => {
               setSubmitState(false);
               navigate('/');
+              localStorage.removeItem('dataStore');
+              setDataStore([]);
             }}
           >
             Home

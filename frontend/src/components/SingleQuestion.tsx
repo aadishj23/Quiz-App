@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 import { useRecoilValue } from "recoil"
 import { datastore } from "../store/atoms/datastore"
 import { Data } from "../types/datastoretype"
@@ -8,11 +8,14 @@ import { submit } from "../store/atoms/submit"
 function SingleQuestion(props:any) {
   const dataStore = useRecoilValue<Data[]>(datastore)
   const submitState = useRecoilValue(submit)
-  
+   
+  React.useEffect(() => {
+    localStorage.setItem('dataStore', JSON.stringify(dataStore));
+  }, [dataStore]);
+
   return (
     <div className="p-4">
       <p className="font-semibold text-lg mb-4">Question {props.questionNumber}</p> 
-      {/* add the question number later when sql is connected */}
       {props.question}
       <br></br>
       {Object.entries(props.answers).map(([key, value]) => {

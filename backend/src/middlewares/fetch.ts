@@ -1,8 +1,11 @@
 import axios from "axios";
+import dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
 
+dotenv.config();
+
 const fetch = async (req: Request, res: Response,next:NextFunction) =>{
-    const baseURL = "https://quizapi.io/api/v1/questions?apiKey=UINipDkO8Dl0yUKerqUErhb8O65OQAgLMTna6lC1";
+    const baseURL = process.env.API_URL;
     const fetchedData = await axios({
         url: `${baseURL}&category=${req.body.category}&difficulty=${req.body.difficulty}&limit=${req.body.questioncount}`,
         method: "GET",

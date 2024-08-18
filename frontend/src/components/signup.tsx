@@ -19,7 +19,6 @@ function Signup() {
             }
         })
     }
-    // console.log(signUpData)
 
     async function handleSubmit(event:any){
         event.preventDefault()
@@ -31,11 +30,14 @@ function Signup() {
                 email: signUpData.Email,
                 phone: signUpData.Phone,
                 password: signUpData.Password,
-                // confirmPassword: signUpData.ConfirmPassword
+                confirmPassword: signUpData.ConfirmPassword
             }),
+            headers: {
+                'Content-Type': 'application/json' 
+            } ,
         });
         setLoggedIn(true)
-        navigate('/')
+        navigate('/signin')
     }
     
     return (
