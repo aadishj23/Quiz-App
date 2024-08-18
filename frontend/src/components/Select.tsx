@@ -30,10 +30,27 @@ function Select() {
         navigate('/question');
     }
 
+    async function getData(){
+        const response= await axios({
+            url: "http://localhost:5000/api/quiz",
+            method: "POST",
+            data: {
+                category: data.category,
+                difficulty: data.difficulty,
+                questioncount: data.questioncount,
+            },
+        });
+        // setDataStore(response.data);
+    }
+    
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <h1 className="mb-8 text-7xl font-bold text-blue-600">Quizzical</h1>
-            <form onSubmit={handleSubmit} className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+            <form 
+                onSubmit={handleSubmit} 
+                className="w-full max-w-md p-6 bg-white rounded-lg shadow-md"
+            >
                 <div className="mb-4">
                     <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">
                         Select Category
