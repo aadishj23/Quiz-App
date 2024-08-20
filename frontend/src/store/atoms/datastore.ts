@@ -7,7 +7,7 @@ export const datastore= atom<Data[]>({
     default: selector({
         key: "datastore/default",
         get: () => {
-            const savedDataStore = localStorage.getItem('dataStore');
+            const savedDataStore = sessionStorage.getItem('dataStore');
             return savedDataStore ? JSON.parse(savedDataStore) : [];
         },
     }),

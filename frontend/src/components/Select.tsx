@@ -3,6 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
 import { useNavigate } from 'react-router-dom';
+import { Data } from '../types/datastoretype';
 import axios from 'axios';
 
 function Select() {
@@ -25,8 +26,21 @@ function Select() {
             url: `${baseURL}&category=${data.category}&difficulty=${data.difficulty}&limit=${data.questioncount}`,
             method: "GET",
         });
-        const dataRes = fetchedData.data;
-        setDataStore(dataRes);
+        const dataRes:Data[] = fetchedData.data;
+        const dataWithHeld:Data[] = dataRes.map(dataWithoutHeld => ({
+            ...dataWithoutHeld,
+            selected_answer: null,
+            is_correct: false,
+            is_held: {
+                answer_a_held: false,
+                answer_b_held: false,
+                answer_c_held: false,
+                answer_d_held: false,
+                answer_e_held: false,
+                answer_f_held: false,
+            },
+        }));
+        setDataStore(dataWithHeld);
         navigate('/question');
     }
 
