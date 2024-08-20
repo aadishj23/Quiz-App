@@ -81,7 +81,7 @@ app.post('/signin',auth, async (req:Request, res:Response) => {
             } else {
                 res.status(500).send("JWT secret is not defined");
             }
-            res.send(user);
+            // res.send(user);
         } else {
             res.status(401).send("Invalid email or password");
         }

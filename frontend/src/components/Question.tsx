@@ -1,76 +1,89 @@
-import { useRecoilState } from "recoil"
+import React from 'react'
+import { useRecoilState,useSetRecoilState} from "recoil"
 import { datastore } from "../store/atoms/datastore"
-import SingleQuestion from "./SingleQuestion"
+import QuestionMap from "./QuestionMap"
 import { submit } from '../store/atoms/submit'
 import { useNavigate } from 'react-router-dom'
+import { PopUpAtom } from '../store/atoms/popup'
+import PopUp from './PopUp'
 
 function Question() {
     const [dataStore, setDataStore] = useRecoilState(datastore)
     const [submitState, setSubmitState] = useRecoilState(submit)
+    const setPopup = useSetRecoilState(PopUpAtom)
+
     const navigate = useNavigate();
 
-    const handleClick = (id: number, answerkey : string) => {
-      setDataStore(prevStore =>
-        prevStore.map(prevheld =>
-          prevheld.id === id
-            ? { ...prevheld, 
-              selected_answer: answerkey,
-              is_held: Object.fromEntries(
-                Object.keys(prevheld.is_held || {}).map(key => [
-                  key,
-                  key === `${answerkey}_held`
-                    ? !prevheld.is_held?.[key]
-                    : false,
-                ])
-              ),
-            }
-            : prevheld
-        )
-      );
-      console.log(dataStore)
+    React.useEffect(() => {
+      sessionStorage.setItem('submit', JSON.stringify(submitState));
+    }, [submitState]);
+
+    const calculateScore = () => {
+      let score = 0;
+      dataStore.forEach(question => {
+        if (question.is_correct) {
+          score++;
+        }
+      });
+      return score;
     };
 
-    const datafinal= dataStore.map(dataval=> {
-        return (
-          <SingleQuestion 
-            question={dataval.question} 
-            answers={dataval.answers} 
-            key={dataval.id} 
-            onclick={(answerkey : string) => handleClick(dataval.id,answerkey)}
-            className="p-4 bg-white shadow-md rounded-md mb-4"
-         />)
-    })
+    const countIsCorrect = () => {
+      const updatedDataStore = dataStore.map(question => {
+        const correctAnswer = question.correct_answers[`${question.selected_answer}_correct`];
+        return {
+          ...question,
+          is_correct: correctAnswer === "true" ? true : false,
+        };
+      });
+      setDataStore(updatedDataStore);
+    }
 
+    const handleInitialSubmit = () => {
+      const unansweredQuestions = dataStore.filter(question => question.selected_answer === null);
+      if (unansweredQuestions.length === 0) {
+        setSubmitState(true);
+        countIsCorrect();
+      } else {
+        setPopup(true);
+      }
+    }
+
+    const handleHome = () => {
+      setSubmitState(false);
+      navigate('/');
+      sessionStorage.removeItem('dataStore');
+      sessionStorage.removeItem('submit');
+      setDataStore([]);
+    }
+ 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-        {datafinal}
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center space-y-8">
+        <QuestionMap />
         { submitState === false ? 
           (<button 
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
-            onClick={() => {
-              const unansweredQuestions = dataStore.filter(question => question.selected_answer === null);
-              if (unansweredQuestions.length === 0) {
-                setSubmitState(true);
-              } else {
-                alert("Please answer all questions before submitting.");
-              }
-            }}
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105"
+            onClick={handleInitialSubmit}
           >
             Submit
           </button> )
           : 
-          (<button 
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-auto block" 
-            onClick={() => {
-              setSubmitState(false);
-              navigate('/');
-              localStorage.removeItem('dataStore');
-              setDataStore([]);
-            }}
-          >
-            Home
-          </button> )
+          (<div className="flex flex-col items-center space-y-4">
+            <p className="text-2xl font-bold text-gray-800 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+              Your total score is 
+              <span className="text-blue-600 font-extrabold text-3xl ml-2">
+                {calculateScore()}
+              </span>
+            </p>            
+            <button 
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105"
+              onClick={handleHome}
+            >
+              Home
+            </button> 
+          </div>)
         }
+      <PopUp />  
     </div>
   )
 }
