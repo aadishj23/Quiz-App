@@ -5,7 +5,7 @@ import { Data } from "../types/datastoretype"
 import { nanoid } from "nanoid"
 import { submit } from "../store/atoms/submit"
 
-function SingleQuestion() {
+function QuestionMap() {
   const [dataStore,setDataStore] = useRecoilState<Data[]>(datastore)
   const submitState = useRecoilValue(submit)
   
@@ -56,11 +56,11 @@ function SingleQuestion() {
                             ? "bg-blue-500 border-blue-500 text-white"
                             : "bg-[#FFFFFF] border-gray-300")
                           :
-                          ((item.is_held?.[`${key}_held`])
-                              ? ((item.correct_answers[`${item.selected_answer}_correct`] === "true")
-                                ? "bg-green-500 border-green-500 text-white"
-                                : "bg-red-500 border-red-500 text-white")
-                              : ("bg-[#FFFFFF] border-gray-300"))
+                          ((item.is_held?.[`${key}_held`]) ? 
+                            ((item.correct_answers[`${item.selected_answer}_correct`] === "true") ? 
+                              "bg-green-500 border-green-500 text-white"
+                              : "bg-red-500 border-red-500 text-white")
+                            : ("bg-[#FFFFFF] border-gray-300"))
                       }`}
                       disabled={submitState}
                       key={nanoid()}
@@ -79,4 +79,4 @@ function SingleQuestion() {
   )
 }
 
-export default SingleQuestion
+export default QuestionMap
