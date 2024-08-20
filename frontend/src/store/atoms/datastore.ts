@@ -1,7 +1,14 @@
 import { atom } from "recoil";
 import { Data } from "../../types/datastoretype";
+import { selector } from "recoil";
 
 export const datastore= atom<Data[]>({
     key:"datastore",
-    default: []
+    default: selector({
+        key: "datastore/default",
+        get: () => {
+            const savedDataStore = localStorage.getItem('dataStore');
+            return savedDataStore ? JSON.parse(savedDataStore) : [];
+        },
+    }),
 })

@@ -83,6 +83,8 @@ function Question() {
             onClick={() => {
               setSubmitState(false);
               navigate('/');
+              localStorage.removeItem('dataStore');
+              setDataStore([]);
             }}
           >
             Home
