@@ -4,12 +4,16 @@ import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
 import { loggedin } from '../store/atoms/loggedin';
 import { useNavigate } from 'react-router-dom';
+import { logoutpopup } from '../store/atoms/logoutpopup'
+import LogoutPopUp from './LogoutPopUp'
 import axios from 'axios';
 
-function Select() {
+function Select() { 
     const [data, setData] = useRecoilState(datainput);
     const [isLoggedin,setLoggedIn] = useRecoilState(loggedin);
     const setDataStore = useSetRecoilState(datastore);
+    const setLogPopUp = useSetRecoilState(logoutpopup)
+
     const navigate = useNavigate();
 
     function handleChange(event: any) {
@@ -69,6 +73,7 @@ function Select() {
                         onClick={() => {
                             setLoggedIn(false)
                             localStorage.removeItem('token')
+                            setLogPopUp(true)
                         }}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"
                     > 
@@ -141,6 +146,7 @@ function Select() {
                         className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
                     />
             </form>
+            <LogoutPopUp />
         </div>
     );
 }

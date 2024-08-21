@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
+import { PrismaClient } from '@prisma/client';
 import auth from './middlewares/auth';
 import {QuizData,User} from './db';
 import fetch from './middlewares/fetch';
@@ -13,6 +15,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const URL = process.env.DATABASE_URL;
+
+const primsa= new PrismaClient();
 
 app.use(cors());
 app.use(express.json());
