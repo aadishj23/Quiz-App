@@ -8,7 +8,7 @@ const signinSchema = zod.object({
 const signupSchema = zod.object({
     name: zod.string().min(3),
     email: zod.string().email(),
-    phone: zod.number().min(10),
+    phone: zod.string().min(10), // change to phone number validation
     password: zod.string().min(10),
     confirmPassword: zod.string().min(10),
 });

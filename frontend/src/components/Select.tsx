@@ -1,5 +1,5 @@
 // import React from 'react'
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
 import { loggedin } from '../store/atoms/loggedin';
@@ -10,7 +10,7 @@ import axios from 'axios';
 
 function Select() { 
     const [data, setData] = useRecoilState(datainput);
-    const [isLoggedin,setLoggedIn] = useRecoilState(loggedin);
+    const isLoggedin = useRecoilValue(loggedin);
     const setDataStore = useSetRecoilState(datastore);
     const setLogPopUp = useSetRecoilState(logoutpopup)
 
@@ -71,8 +71,6 @@ function Select() {
                     <p className="text-center text-lg font-semibold">Welcome</p>
                     <button 
                         onClick={() => {
-                            setLoggedIn(false)
-                            localStorage.removeItem('token')
                             setLogPopUp(true)
                         }}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"

@@ -34,7 +34,7 @@ function Signin() {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             } ,
         });
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', JSON.stringify(response.data));
         setLoggedIn(true)
         navigate('/')
     }

@@ -14,13 +14,12 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
+  id       String    @id @default(dbgenerated())
   password String
   name     String
-  email    String  @unique
-  phone    String  @unique
-  quizzes  QuizData[] 
-
+  email    String    @unique
+  phone    String    @unique
+  quizzes  QuizData[]
 }
 
 model QuizData {
@@ -29,6 +28,6 @@ model QuizData {
   difficulty    String
   questioncount Int
   data          Json
-  userId        Int     
-  user          User     @relation(fields: [userId], references: [id])
+  userId        String?   
+  user          User?     @relation(fields: [userId], references: [id])
 }

@@ -1,8 +1,10 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState,useSetRecoilState } from "recoil";
 import { logoutpopup } from "../store/atoms/logoutpopup";
+import { loggedin } from '../store/atoms/loggedin';
 
 function LogoutPopUp() {
   const [logPopUp, setLogPopUp] = useRecoilState(logoutpopup);
+  const setLoggedIn = useSetRecoilState(loggedin);
 
   if (!logPopUp) return null;
 
@@ -15,7 +17,8 @@ function LogoutPopUp() {
           <button
             className="bg-red-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
             onClick={() => {
-              // Add logout logic here
+              setLoggedIn(false);
+              localStorage.removeItem('token')
               setLogPopUp(false);
             }}
           >

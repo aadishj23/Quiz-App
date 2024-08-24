@@ -1,12 +1,10 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { PrismaClient } from '@prisma/client';
 import auth from './middlewares/auth';
-import {QuizData,User} from './db';
 import fetch from './middlewares/fetch';
 import { signinSchema,signupSchema } from './validation';
 import { Request, Response,NextFunction } from "express";
@@ -14,9 +12,8 @@ import { Request, Response,NextFunction } from "express";
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
-const URL = process.env.DATABASE_URL;
 
-const primsa= new PrismaClient();
+const prisma= new PrismaClient();
 
 app.use(cors());
 app.use(express.json());
@@ -26,31 +23,34 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     })
 })
 
-if (URL) {
-    mongoose.connect(URL)
-        .then(() => console.log("Connected to MongoDB"))
-        .catch(err => console.error("MongoDB connection error:", err));
-} else {
-    console.error("DATABASE_URL is not defined");
-}
-
 app.post('/updatedata', fetch, async (req:Request, res:Response) => {
-    await QuizData.create({
-        category: req.body.category,
-        difficulty: req.body.difficulty,
-        questioncount: req.body.questioncount,
-        data: req.body.dataRes,
-    });
-    const data = await QuizData.find({
-        category: req.body.category,
-        difficulty: req.body.difficulty,
-        questioncount: req.body.questioncount,
-        data: req.body.dataRes,
-    });
-    res.send(data);  
+    try {
+        await prisma.quizData.create({
+            data:{
+                category: req.body.category,
+                difficulty: req.body.difficulty,
+                questioncount: req.body.questioncount,
+                data: req.body.dataRes,
+            }
+        });
+        const data = await prisma.quizData.findMany({
+            where: {
+                category: req.body.category,
+                difficulty: req.body.difficulty,
+                questioncount: req.body.questioncount,
+                data: {
+                    equals: req.body.dataRes,
+                },
+            },
+        });
+        res.send(data);
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).send('An error occurred while updating data.');
+    }
 });
 
-app.post('/signup',auth, async (req:Request, res:Response) => {
+app.post('/signup', async (req:Request, res:Response) => {
     const { name, email, phone, password, confirmPassword } = req.body;
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
@@ -59,7 +59,15 @@ app.post('/signup',auth, async (req:Request, res:Response) => {
         if (password !== confirmPassword) {
             res.status(400).send("Password and Confirm Password must be the same");
         } else {
-            const user = await User.create({ name, email, phone, password });
+            const user = await prisma.user.create({
+                data: {
+                  id: nanoid(),      
+                  name,
+                  email,
+                  phone,
+                  password,
+                },
+            });
             res.status(200).json({ 
                 "message": "User created successfully", 
                 "user": user 
@@ -68,20 +76,24 @@ app.post('/signup',auth, async (req:Request, res:Response) => {
     }
 });
 
-app.post('/signin',auth, async (req:Request, res:Response) => {
+app.post('/signin', async (req:Request, res:Response) => {
     const signinData = signinSchema.safeParse(req.body);
     if (!signinData.success) {
         res.status(400).send(signinData.error);
     } else {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await prisma.user.findUnique({
+            where: {
+            email: email
+            }
+        });
         if (user && user.password === password) {
             const jwtSecret = process.env.JWT_SECRET;
             if (jwtSecret) {
                 const token = jwt.sign({
-                userid: user._id,
+                userid: user.id,
                 }, jwtSecret, { expiresIn: '10d' });
-                res.send({ token });
+                res.send(token);
             } else {
                 res.status(500).send("JWT secret is not defined");
             }
