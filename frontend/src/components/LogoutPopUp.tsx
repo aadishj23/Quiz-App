@@ -19,6 +19,7 @@ function LogoutPopUp() {
             onClick={() => {
               setLoggedIn(false);
               localStorage.removeItem('token')
+              localStorage.removeItem('name')
               setLogPopUp(false);
             }}
           >

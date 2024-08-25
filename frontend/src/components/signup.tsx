@@ -1,12 +1,10 @@
-import { useRecoilState ,useSetRecoilState} from "recoil"
-import { loggedin } from "../store/atoms/loggedin"
+import { useRecoilState } from "recoil"
 import { signup } from "../store/atoms/signup"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 
 function Signup() {
     const [signUpData,setSignUpData]=useRecoilState(signup)
-    const setLoggedIn=useSetRecoilState(loggedin)
 
     const navigate=useNavigate()
 
@@ -36,7 +34,6 @@ function Signup() {
                 'Content-Type': 'application/json' 
             } ,
         });
-        setLoggedIn(true)
         navigate('/signin')
     }
     

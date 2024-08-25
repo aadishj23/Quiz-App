@@ -6,17 +6,23 @@ dotenv.config();
 const jwtSecret = process.env.JWT_SECRET;
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.header('Authorization');
-    if (token) {
-        try {
-            const decoded = jwt.verify(token, jwtSecret);
-            req.body.user = decoded;
-            next();
-        } catch (error) {
-            res.status(401).send("Invalid Token");
-        }
-    } else {
-        res.status(401).send("Access Denied");
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({
+            message: 'Please Login First to start the quiz'
+        }); 
+    }
+    const token = authHeader.split(' ')[1];
+
+    try {
+        const decoded = jwt.verify(token,jwtSecret); 
+        req.body.userID = decoded.userid;
+        next();
+    } catch(err) {
+        return res.status(403).json({
+            message: 'Invalid token'
+        }); 
     }
 }
 

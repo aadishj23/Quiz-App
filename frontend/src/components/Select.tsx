@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
@@ -15,6 +15,29 @@ function Select() {
     const setLogPopUp = useSetRecoilState(logoutpopup)
 
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        async function Authorization() {
+            const token =localStorage.getItem('token')
+            if (token) {
+                try {
+                    await axios({
+                        url: "http://localhost:3000/",
+                        method: "GET",
+                        headers: {
+                            'authorization': `Bearer ${JSON.parse(token ?? '')}`
+                        }
+                    })
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            } else {
+                navigate('/signin')
+            }
+        }
+        Authorization();
+    }, []);
 
     function handleChange(event: any) {
         const { name, value } = event.target;
@@ -35,7 +58,8 @@ function Select() {
                 questioncount: data.questioncount,
             }),
             headers: {
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
             } ,
         });
         if (response.data.length > 0) {
@@ -67,13 +91,15 @@ function Select() {
                     </button>
                 </div>
             ):(
-                <div className="absolute top-4 right-4 flex space-x-4">
-                    <p className="text-center text-lg font-semibold">Welcome</p>
+                <div className="absolute top-4 right-4 flex items-center space-x-6 p-2">
+                    <p className="text-center text-lg font-semibold text-gray-700">
+                        Welcome, {JSON.parse(localStorage.getItem('name') ?? '')}
+                    </p>
                     <button 
                         onClick={() => {
                             setLogPopUp(true)
                         }}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"
+                        className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-200 ease-in-out transform hover:scale-105"
                     > 
                         LogOut
                     </button>
@@ -133,7 +159,7 @@ function Select() {
                         id="questioncount"
                         placeholder="Number of Questions"
                         name="questioncount"
-                        value={data.questioncount}
+                        value={data.questioncount || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
                     />

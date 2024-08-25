@@ -22,21 +22,25 @@ function Signin() {
 
     async function handleSubmitSignIn(event:any){
         event.preventDefault()
-        const response= await axios({
-            url: "http://localhost:3000/signin",
-            method: "POST",
-            data: JSON.stringify({
-                email: signInData.Name,
-                password: signInData.Password
-            }),
-            headers: {
-                'Content-Type': 'application/json' ,
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            } ,
-        });
-        localStorage.setItem('token', JSON.stringify(response.data));
-        setLoggedIn(true)
-        navigate('/')
+        try {
+            const response= await axios({
+                url: "http://localhost:3000/signin",
+                method: "POST",
+                data: JSON.stringify({
+                    email: signInData.Name,
+                    password: signInData.Password
+                }),
+                headers: {
+                    'Content-Type': 'application/json' 
+                } ,
+            });
+            localStorage.setItem('token', JSON.stringify(response.data.token));
+            localStorage.setItem('name', JSON.stringify(response.data.name));
+            setLoggedIn(true)
+            navigate('/')
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (

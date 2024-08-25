@@ -23,32 +23,50 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     })
 })
 
-app.post('/updatedata', fetch, async (req:Request, res:Response) => {
+app.get('/',auth, (req:Request, res:Response) => {
+    res.json({
+        message: 'You are authorized',
+        userID: req.body.userID,
+    });
+});
+
+app.post('/updatedata',auth, fetch, async (req: Request, res: Response) => {
     try {
+        const questionCount = parseInt(req.body.questioncount, 10); 
+
+        if (isNaN(questionCount)) {
+            return res.status(400).send('Invalid question count.');
+        }
+
         await prisma.quizData.create({
-            data:{
+            data: {
+                userId: req.body.userID,
                 category: req.body.category,
                 difficulty: req.body.difficulty,
-                questioncount: req.body.questioncount,
+                questioncount: questionCount,
                 data: req.body.dataRes,
-            }
+            },
         });
+
         const data = await prisma.quizData.findMany({
             where: {
+                userId: req.body.userID,
                 category: req.body.category,
                 difficulty: req.body.difficulty,
-                questioncount: req.body.questioncount,
+                questioncount: questionCount,
                 data: {
                     equals: req.body.dataRes,
                 },
             },
         });
+
         res.send(data);
     } catch (error) {
         console.error('Error occurred:', error);
         res.status(500).send('An error occurred while updating data.');
     }
 });
+
 
 app.post('/signup', async (req:Request, res:Response) => {
     const { name, email, phone, password, confirmPassword } = req.body;
@@ -93,7 +111,10 @@ app.post('/signin', async (req:Request, res:Response) => {
                 const token = jwt.sign({
                 userid: user.id,
                 }, jwtSecret, { expiresIn: '10d' });
-                res.send(token);
+                res.send({
+                    token,
+                    name: user.name,
+                });
             } else {
                 res.status(500).send("JWT secret is not defined");
             }
