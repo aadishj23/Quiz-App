@@ -33,7 +33,7 @@ function Select() {
                     console.error(error);
                 }
             } else {
-                navigate('/signin')
+                console.log("No token found");
             }
         }
         Authorization();

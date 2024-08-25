@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
+import bycrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import auth from './middlewares/auth';
 import fetch from './middlewares/fetch';
@@ -77,13 +78,14 @@ app.post('/signup', async (req:Request, res:Response) => {
         if (password !== confirmPassword) {
             res.status(400).send("Password and Confirm Password must be the same");
         } else {
+            const hashedPassword = await bycrypt.hash(password, 10);
             const user = await prisma.user.create({
                 data: {
                   id: nanoid(),      
                   name,
                   email,
                   phone,
-                  password,
+                  password:hashedPassword,
                 },
             });
             res.status(200).json({ 
@@ -102,18 +104,19 @@ app.post('/signin', async (req:Request, res:Response) => {
         const { email, password } = req.body;
         const user = await prisma.user.findUnique({
             where: {
-            email: email
+                email: email
             }
         });
-        if (user && user.password === password) {
+        const isPasswordValid = user ? await bycrypt.compare(password, user.password) : false;
+        if (isPasswordValid) {
             const jwtSecret = process.env.JWT_SECRET;
             if (jwtSecret) {
                 const token = jwt.sign({
-                userid: user.id,
+                userid: user?.id,
                 }, jwtSecret, { expiresIn: '10d' });
                 res.send({
                     token,
-                    name: user.name,
+                    name: user?.name,
                 });
             } else {
                 res.status(500).send("JWT secret is not defined");
