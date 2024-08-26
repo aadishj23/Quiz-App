@@ -6,6 +6,7 @@ import { submit } from '../store/atoms/submit'
 import { useNavigate } from 'react-router-dom'
 import { PopUpAtom } from '../store/atoms/popup'
 import PopUp from './PopUp'
+import axios from 'axios'
 
 function Question() {
     const [dataStore, setDataStore] = useRecoilState(datastore)
@@ -39,7 +40,7 @@ function Question() {
       setDataStore(updatedDataStore);
     }
 
-    const handleInitialSubmit = () => {
+    const handleSubmit = () => {
       const unansweredQuestions = dataStore.filter(question => question.selected_answer === null);
       if (unansweredQuestions.length === 0) {
         setSubmitState(true);
@@ -49,11 +50,34 @@ function Question() {
       }
     }
 
+    React.useEffect(() => {
+      if (submitState) {
+        const score = calculateScore();
+        const token = localStorage.getItem('token');
+        (async () => {
+          await axios({
+            url: "http://localhost:3000/updatedata",
+            method: "PUT",
+            data: JSON.stringify({
+              quizid: sessionStorage.getItem('quizid'),
+              modifiedData: dataStore,
+              score: score,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${JSON.parse(token ?? '')}`,
+            },
+          });
+        })();
+      }
+    }, [dataStore, submitState]);
+    
     const handleHome = () => {
       setSubmitState(false);
       navigate('/');
       sessionStorage.removeItem('dataStore');
       sessionStorage.removeItem('submit');
+      sessionStorage.removeItem('quizid');
       setDataStore([]);
     }
  
@@ -63,7 +87,7 @@ function Question() {
         { submitState === false ? 
           (<button 
             className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105"
-            onClick={handleInitialSubmit}
+            onClick={handleSubmit}
           >
             Submit
           </button> )

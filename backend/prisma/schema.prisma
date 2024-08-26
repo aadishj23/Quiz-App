@@ -24,10 +24,12 @@ model User {
 
 model QuizData {
   id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
   category      String
   difficulty    String
   questioncount Int
   data          Json
-  userId        String?   
-  user          User?     @relation(fields: [userId], references: [id])
+  score         Int?
+  userId        String  
+  user          User    @relation(fields: [userId], references: [id])
 }

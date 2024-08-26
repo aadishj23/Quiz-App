@@ -50,7 +50,7 @@ function Select() {
     async function handleSubmit(event: any) {
         event.preventDefault();
         const response= await axios({
-            url: "http://localhost:3000/updatedata",
+            url: "http://localhost:3000/fetchdata",
             method: "POST",
             data: JSON.stringify({
                 category: data.category,
@@ -65,6 +65,7 @@ function Select() {
         if (response.data.length > 0) {
             setDataStore(response.data[0].data);
         }
+        sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
         console.log(response.data[0].data);
         navigate('/question');
     }
@@ -170,6 +171,14 @@ function Select() {
                         className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
                     />
             </form>
+            <div className="fixed bottom-4 right-4">
+                <button
+                    onClick={() => navigate('/pastquizes')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    Past Quizzes
+                </button>
+            </div>
             <LogoutPopUp />
         </div>
     );

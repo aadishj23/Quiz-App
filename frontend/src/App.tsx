@@ -2,11 +2,17 @@ import Select from "./components/Select"
 import Question from "./components/Question"
 import Signin from "./components/signin";
 import Signup from "./components/signup";
+import PastQuiz from "./components/PastQuiz";
+import ErrorPage from "./components/ErrorPage";
 import { RecoilRoot } from "recoil"
 import { createBrowserRouter,RouterProvider } from "react-router-dom"
 
 function App() {
   const router = createBrowserRouter([
+    {
+      path: '*',
+      element: <ErrorPage />
+    },
     {
       path: '/',
       element: 
@@ -33,6 +39,13 @@ function App() {
       element:
         <RecoilRoot>
           <Signup />
+        </RecoilRoot>
+    },
+    {
+      path: '/pastquizes',
+      element:
+        <RecoilRoot>
+          <PastQuiz />
         </RecoilRoot>
     }
   ])

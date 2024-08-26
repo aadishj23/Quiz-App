@@ -2,8 +2,7 @@
 
 Phase 2
 
-Encrypt the password 
+
 create a general warning message for errors
-create a generalised error page
-show recent quizes
+show recent quizes- play quiz again, delete quiz
 use the API data to show more info on screen  

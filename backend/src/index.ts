@@ -31,9 +31,11 @@ app.get('/',auth, (req:Request, res:Response) => {
     });
 });
 
-app.post('/updatedata',auth, fetch, async (req: Request, res: Response) => {
+app.post('/fetchdata',auth, fetch, async (req: Request, res: Response) => {
     try {
-        const questionCount = parseInt(req.body.questioncount, 10); 
+        const { userID,category,difficulty,questioncount,dataRes } = req.body;
+
+        const questionCount = parseInt(questioncount, 10); 
 
         if (isNaN(questionCount)) {
             return res.status(400).send('Invalid question count.');
@@ -41,22 +43,22 @@ app.post('/updatedata',auth, fetch, async (req: Request, res: Response) => {
 
         await prisma.quizData.create({
             data: {
-                userId: req.body.userID,
-                category: req.body.category,
-                difficulty: req.body.difficulty,
+                userId: userID,
+                category: category,
+                difficulty: difficulty,
                 questioncount: questionCount,
-                data: req.body.dataRes,
+                data: dataRes,
             },
         });
 
         const data = await prisma.quizData.findMany({
             where: {
-                userId: req.body.userID,
-                category: req.body.category,
-                difficulty: req.body.difficulty,
+                userId: userID,
+                category: category,
+                difficulty: difficulty,
                 questioncount: questionCount,
                 data: {
-                    equals: req.body.dataRes,
+                    equals: dataRes,
                 },
             },
         });
@@ -68,6 +70,26 @@ app.post('/updatedata',auth, fetch, async (req: Request, res: Response) => {
     }
 });
 
+app.put('/updatedata',auth, async (req: Request, res: Response) => {
+    try {
+        const { modifiedData, score,userID,quizid} = req.body;
+        
+        const data = await prisma.quizData.update({
+            where: {
+                id: parseInt(quizid,10),
+                userId: userID,
+            },
+            data: {
+                data: modifiedData,
+                score: parseInt(score, 10),
+            },
+        });
+        res.send(data);
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).send('An error occurred while updating data.');
+    }
+});
 
 app.post('/signup', async (req:Request, res:Response) => {
     const { name, email, phone, password, confirmPassword } = req.body;
@@ -121,7 +143,6 @@ app.post('/signin', async (req:Request, res:Response) => {
             } else {
                 res.status(500).send("JWT secret is not defined");
             }
-            // res.send(user);
         } else {
             res.status(401).send("Invalid email or password");
         }
