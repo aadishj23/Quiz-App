@@ -1,20 +1,24 @@
-// import React from 'react'
+import { useState } from 'react';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
 import { loggedin } from '../store/atoms/loggedin';
 import { useNavigate } from 'react-router-dom';
-import { logoutpopup } from '../store/atoms/logoutpopup'
-import LogoutPopUp from './LogoutPopUp'
+import { logoutpopup } from '../store/atoms/logoutpopup';
+import { pastdata } from '../store/atoms/pastdata';
+import LogoutPopUp from './LogoutPopUp';
 import axios from 'axios';
 
 function Select() { 
     const [data, setData] = useRecoilState(datainput);
     const isLoggedin = useRecoilValue(loggedin);
     const setDataStore = useSetRecoilState(datastore);
-    const setLogPopUp = useSetRecoilState(logoutpopup)
-
+    const setLogPopUp = useSetRecoilState(logoutpopup);
+    const setPastData = useSetRecoilState(pastdata);
     const navigate = useNavigate();
+    
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     function handleChange(event: any) {
         const { name, value } = event.target;
@@ -26,68 +30,87 @@ function Select() {
 
     async function handleSubmit(event: any) {
         event.preventDefault();
-        const response= await axios({
-            url: "http://localhost:3000/fetchdata",
-            method: "POST",
-            data: JSON.stringify({
-                category: data.category,
-                difficulty: data.difficulty,
-                questioncount: data.questioncount,
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
-            } ,
-        });
-        if (response.data.length > 0) {
-            setDataStore(response.data[0].data);
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios({
+                url: "http://localhost:3000/fetchdata",
+                method: "POST",
+                data: JSON.stringify({
+                    category: data.category,
+                    difficulty: data.difficulty,
+                    questioncount: data.questioncount,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+                },
+            });
+            if (response.data.length > 0) {
+                setDataStore(response.data[0].data);
+            }
+            sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
+            navigate('/question');
+        } catch (err) {
+            setError('Failed to fetch data. Please try again.');
+        } finally {
+            setLoading(false);
         }
-        sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
-        console.log(response.data[0].data);
-        navigate('/question');
+    }
+
+    const handlePastData = async () => {
+        try {
+            const response = await axios({
+                url: "http://localhost:3000/pastdata",
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+                },
+            });
+            sessionStorage.setItem('pastdata', JSON.stringify(response.data));
+            setPastData(response.data);
+        } catch (err) {
+            setError('Failed to fetch past data. Please try again.');
+        }
     }
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
             {isLoggedin === false ? (
                 <div className="absolute top-4 right-4 flex space-x-4">
                     <button 
-                        onClick={()=>{
-                            navigate('/signin')
-                        }} 
+                        onClick={() => navigate('/signin')} 
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
                     >
                         Sign In
                     </button>
                     <button 
-                        onClick={()=>{
-                            navigate('/signup')
-                        }} 
+                        onClick={() => navigate('/signup')} 
                         className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200"
                     >
                         Sign Up
                     </button>
                 </div>
             ):(
-                <div className="absolute top-4 right-4 flex items-center space-x-6 p-2">
-                    <p className="text-center text-lg font-semibold text-gray-700">
-                        Welcome, {JSON.parse(localStorage.getItem('name') ?? '')}
+                <div className="absolute top-4 left-4 right-4 flex justify-between items-center p-2">
+                    <p className="text-lg font-semibold text-gray-800">
+                        Welcome, <span className="font-bold">{JSON.parse(localStorage.getItem('name') ?? '')}</span>
                     </p>
                     <button 
-                        onClick={() => {
-                            setLogPopUp(true)
-                        }}
+                        onClick={() => setLogPopUp(true)}
                         className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-200 ease-in-out transform hover:scale-105"
                     > 
-                        LogOut
+                        Log Out
                     </button>
                 </div>
             )}
 
-            <h1 className="mb-8 text-7xl font-bold text-blue-600">Quizzical</h1>
+            <h1 className="mb-8 text-5xl font-bold text-blue-600">Quizzical</h1>
+
             <form 
                 onSubmit={handleSubmit}
-                className="w-full max-w-md p-6 bg-white rounded-lg shadow-md"
+                className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md"
             >
                 <div className="mb-4">
                     <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">
@@ -140,18 +163,26 @@ function Select() {
                         value={data.questioncount || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                        required
                     />
                 </div>
-                    <input
-                        type="submit"
-                        value="Start Quiz"
-                        className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
-                    />
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className={`w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700 ${loading ? 'bg-blue-400 cursor-not-allowed' : ''}`}
+                >
+                    {loading ? 'Loading...' : 'Start Quiz'}
+                </button>
             </form>
-            { isLoggedin &&
+
+            {isLoggedin &&
                 <div className="fixed bottom-4 right-4">
                     <button
-                        onClick={() => navigate('/pastquizes')}
+                        onClick={() => {
+                            navigate('/pastquizes');
+                            handlePastData();
+                        }}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                     >
                         Past Quizzes

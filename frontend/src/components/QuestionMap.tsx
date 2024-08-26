@@ -31,7 +31,7 @@ function QuestionMap() {
           : prevheld
       )
     );
-    console.log(dataStore)
+    // console.log(dataStore)
   };
   
   return (
