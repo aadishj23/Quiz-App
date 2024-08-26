@@ -13,3 +13,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       String    @id @default(dbgenerated())
+  password String
+  name     String
+  email    String    @unique
+  phone    String    @unique
+  quizzes  QuizData[]
+}
+
+model QuizData {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  category      String
+  difficulty    String
+  questioncount Int
+  data          Json
+  modifieddata  Json?
+  score         Int?
+  userId        String  
+  user          User    @relation(fields: [userId], references: [id])
+}

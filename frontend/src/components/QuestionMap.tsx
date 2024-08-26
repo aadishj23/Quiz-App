@@ -31,7 +31,7 @@ function QuestionMap() {
           : prevheld
       )
     );
-    console.log(dataStore)
+    // console.log(dataStore
   };
   
   return (
@@ -56,11 +56,13 @@ function QuestionMap() {
                             ? "bg-blue-500 border-blue-500 text-white"
                             : "bg-[#FFFFFF] border-gray-300")
                           :
-                          ((item.is_held?.[`${key}_held`]) ? 
-                            ((item.correct_answers[`${item.selected_answer}_correct`] === "true") ? 
-                              "bg-green-500 border-green-500 text-white"
-                              : "bg-red-500 border-red-500 text-white")
-                            : ("bg-[#FFFFFF] border-gray-300"))
+                          ((item.is_held?.[`${key}_held`])
+                              ? ((item.correct_answers[`${item.selected_answer}_correct`] === "true")
+                                ? "bg-green-500 border-green-500 text-white"
+                                : "bg-red-500 border-red-500 text-white")
+                              : ((item.correct_answers[`${key}_correct`] === "true")
+                                ?("bg-green-200 border-green-200 ")
+                                :("bg-[#FFFFFF] border-gray-300")))
                       }`}
                       disabled={submitState}
                       key={nanoid()}
