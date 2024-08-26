@@ -60,7 +60,9 @@ function QuestionMap() {
                               ? ((item.correct_answers[`${item.selected_answer}_correct`] === "true")
                                 ? "bg-green-500 border-green-500 text-white"
                                 : "bg-red-500 border-red-500 text-white")
-                              : ("bg-[#FFFFFF] border-gray-300"))
+                              : ((item.correct_answers[`${key}_correct`] === "true")
+                                ?("bg-green-200 border-green-200 ")
+                                :("bg-[#FFFFFF] border-gray-300")))
                       }`}
                       disabled={submitState}
                       key={nanoid()}

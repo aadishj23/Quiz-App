@@ -52,7 +52,7 @@ function Select() {
             sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
             navigate('/question');
         } catch (err) {
-            setError('Failed to fetch data. Please try again.');
+            setError('Please Login First Before Starting the Quiz');
         } finally {
             setLoading(false);
         }
