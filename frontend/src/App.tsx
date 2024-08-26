@@ -10,10 +10,6 @@ import { createBrowserRouter,RouterProvider } from "react-router-dom"
 function App() {
   const router = createBrowserRouter([
     {
-      path: '*',
-      element: <ErrorPage />
-    },
-    {
       path: '/',
       element: 
         <RecoilRoot>
@@ -47,6 +43,10 @@ function App() {
         <RecoilRoot>
           <PastQuiz />
         </RecoilRoot>
+    },
+    {
+      path: '*',
+      element: <ErrorPage />
     }
   ])
   
