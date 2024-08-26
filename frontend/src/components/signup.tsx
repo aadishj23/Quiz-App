@@ -2,49 +2,56 @@ import { useRecoilState } from "recoil"
 import { signup } from "../store/atoms/signup"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useState } from "react"
 
 function Signup() {
-    const [signUpData,setSignUpData]=useRecoilState(signup)
+    const [signUpData, setSignUpData] = useRecoilState(signup)
+    const [isLoading, setIsLoading] = useState(false)
 
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
-    function handleChange(event:any){
-        const {name,value}=event.target
-        setSignUpData(prevSignUpData => {
-            return {
-                ...prevSignUpData,
-                [name]:value
-            }
-        })
+    function handleChange(event: any) {
+        const { name, value } = event.target
+        setSignUpData(prevSignUpData => ({
+            ...prevSignUpData,
+            [name]: value
+        }))
     }
 
-    async function handleSubmit(event:any){
+    async function handleSubmit(event: any) {
         event.preventDefault()
-        await axios({
-            url: "https://quiz-app-d0dc.onrender.com/signup",
-            method: "POST",
-            data: JSON.stringify({
-                name: signUpData.Name,
-                email: signUpData.Email,
-                phone: signUpData.Phone,
-                password: signUpData.Password,
-                confirmPassword: signUpData.ConfirmPassword
-            }),
-            headers: {
-                'Content-Type': 'application/json' 
-            } ,
-        });
-        navigate('/signin')
+        setIsLoading(true)
+        try {
+            await axios({
+                url: "https://quiz-app-d0dc.onrender.com/signup",
+                method: "POST",
+                data: JSON.stringify({
+                    name: signUpData.Name,
+                    email: signUpData.Email,
+                    phone: signUpData.Phone,
+                    password: signUpData.Password,
+                    confirmPassword: signUpData.ConfirmPassword
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            navigate('/signin')
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
     }
-    
+
     return (
         <div className="signup flex justify-center items-center min-h-screen bg-gray-100">
-            <form 
-                className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm" 
+            <form
+                className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
                 onSubmit={handleSubmit}
             >
-                <label 
-                    htmlFor="name" 
+                <label
+                    htmlFor="name"
                     className="block text-gray-700 text-sm font-bold mb-2"
                 >
                     NAME
@@ -58,8 +65,8 @@ function Signup() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <label 
-                    htmlFor="email" 
+                <label
+                    htmlFor="email"
                     className="block text-gray-700 text-sm font-bold mb-2"
                 >
                     EMAIL
@@ -73,11 +80,11 @@ function Signup() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <label 
-                    htmlFor="phone" 
+                <label
+                    htmlFor="phone"
                     className="block text-gray-700 text-sm font-bold mb-2"
                 >
-                    Phone
+                    PHONE
                 </label>
                 <input
                     type="text"
@@ -88,8 +95,8 @@ function Signup() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <label 
-                    htmlFor="password" 
+                <label
+                    htmlFor="password"
                     className="block text-gray-700 text-sm font-bold mb-2"
                 >
                     PASSWORD
@@ -103,8 +110,8 @@ function Signup() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <label 
-                    htmlFor="cnfpswd" 
+                <label
+                    htmlFor="cnfpswd"
                     className="block text-gray-700 text-sm font-bold mb-2"
                 >
                     CONFIRM PASSWORD
@@ -118,16 +125,42 @@ function Signup() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <button 
-                    type="submit" 
-                    className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+                <button
+                    type="submit"
+                    className={`w-full py-2 rounded-lg text-white transition duration-200 ${isLoading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
+                    disabled={isLoading}
                 >
-                    Sign Up
+                    {isLoading ? (
+                        <div className="flex items-center justify-center">
+                            <svg
+                                className="animate-spin h-5 w-5 mr-3 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                ></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM12 16a4 4 0 010-8V4a8 8 0 100 16v-4z"
+                                ></path>
+                            </svg>
+                            Signing Up...
+                        </div>
+                    ) : (
+                        'Sign Up'
+                    )}
                 </button>
             </form>
         </div>
     )
-  
 }
 
 export default Signup
