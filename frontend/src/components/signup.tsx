@@ -21,7 +21,7 @@ function Signup() {
     async function handleSubmit(event:any){
         event.preventDefault()
         await axios({
-            url: "http://localhost:3000/signup",
+            url: "https://quiz-app-d0dc.onrender.com/signup",
             method: "POST",
             data: JSON.stringify({
                 name: signUpData.Name,

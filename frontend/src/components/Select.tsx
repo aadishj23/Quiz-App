@@ -34,7 +34,7 @@ function Select() {
         setError('');
         try {
             const response = await axios({
-                url: "http://localhost:3000/fetchdata",
+                url: "https://quiz-app-d0dc.onrender.com/fetchdata",
                 method: "POST",
                 data: JSON.stringify({
                     category: data.category,
@@ -61,7 +61,7 @@ function Select() {
     const handlePastData = async () => {
         try {
             const response = await axios({
-                url: "http://localhost:3000/pastdata",
+                url: "https://quiz-app-d0dc.onrender.com/pastdata",
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',

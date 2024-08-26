@@ -16,7 +16,7 @@ function PastQuiz() {
   const deleteQuiz = async(id: number) => {
     try {
       await axios({
-        url: "http://localhost:3000/deletedata",
+        url: "https://quiz-app-d0dc.onrender.com/deletedata",
         method: "DELETE",
         data: JSON.stringify({
           quizid: id
@@ -27,7 +27,7 @@ function PastQuiz() {
         }
       });
       const response = await axios({
-        url: "http://localhost:3000/pastdata",
+        url: "https://quiz-app-d0dc.onrender.com/pastdata",
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
