@@ -1,12 +1,45 @@
 // import React from 'react'
 import { pastdata } from "../store/atoms/pastdata"
-import { useRecoilValue } from "recoil"
+import { datastore } from "../store/atoms/datastore"
+import { submit } from "../store/atoms/submit"
+import { useRecoilState ,useSetRecoilState} from "recoil"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
 function PastQuiz() {
 
-  const pastData = useRecoilValue(pastdata)
+  const setSubmitState = useSetRecoilState(submit)
+  const setDataStore = useSetRecoilState(datastore)
+  const [pastData, setPastData] = useRecoilState(pastdata)
   const navigate = useNavigate()
+
+  const deleteQuiz = async(id: number) => {
+    try {
+      await axios({
+        url: "http://localhost:3000/deletedata",
+        method: "DELETE",
+        data: JSON.stringify({
+          quizid: id
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+        }
+      });
+      const response = await axios({
+        url: "http://localhost:3000/pastdata",
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+          },
+      });
+      sessionStorage.setItem('pastdata', JSON.stringify(response.data));
+      setPastData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const pastQuiz = pastData.map((item: any, index: number) => {
     return (
@@ -32,13 +65,31 @@ function PastQuiz() {
           Score: <span className={`font-bold ${item.score >= (item.questioncount/2) ? 'text-green-600' : 'text-red-600'}`}>{item.score}</span>
         </p>
         <div className="flex justify-between items-center">
-          <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out">
+          <button 
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
+            onClick={() => deleteQuiz(item.id)}
+          >
             Delete
           </button>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out">
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
+            onClick={() => {
+              setSubmitState(false)
+              setDataStore(item.data)
+              sessionStorage.setItem('quizid', JSON.stringify(item.id))
+              navigate('/question')
+            }}
+          >
             Reattempt
           </button>
-          <button className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out">
+          <button 
+            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
+            onClick={() => {
+              setSubmitState(true)
+              setDataStore(item.modifieddata)
+              navigate('/question')
+            }}
+          >
             View Result
           </button>
         </div>

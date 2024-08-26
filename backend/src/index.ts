@@ -88,7 +88,7 @@ app.put('/updatedata',auth, async (req: Request, res: Response) => {
                 userId: userID,
             },
             data: {
-                data: modifiedData,
+                modifieddata: modifiedData,
                 score: parseInt(score, 10),
             },
         });
@@ -96,6 +96,22 @@ app.put('/updatedata',auth, async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error occurred:', error);
         res.status(500).send('An error occurred while updating data.');
+    }
+});
+
+app.delete('/deletedata',auth, async (req: Request, res: Response) => {
+    try {
+        const { userID, quizid } = req.body;
+        const data = await prisma.quizData.deleteMany({
+            where: {
+                userId: userID,
+                id: parseInt(quizid, 10),
+            },
+        });
+        res.send(data);
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).send('An error occurred while deleting data.');
     }
 });
 

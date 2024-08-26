@@ -29,6 +29,7 @@ model QuizData {
   difficulty    String
   questioncount Int
   data          Json
+  modifieddata  Json?
   score         Int?
   userId        String  
   user          User    @relation(fields: [userId], references: [id])
