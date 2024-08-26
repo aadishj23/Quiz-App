@@ -1,13 +1,7 @@
 import { atom } from "recoil";
-import { selector } from "recoil";
+import { loginSelector } from "../selectors/loginSelector";
 
 export const loggedin = atom<boolean>({
     key: "loggedin",
-    default: selector({
-        key: "loggedin/default",
-        get: () => {
-            const savedLoggedIn = localStorage.getItem('token');
-            return savedLoggedIn ? true : false;
-        },
-    }),
+    default: loginSelector
 });

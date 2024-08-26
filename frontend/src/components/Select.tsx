@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { datainput } from '../store/atoms/data';
 import { datastore } from '../store/atoms/datastore';
@@ -15,29 +15,6 @@ function Select() {
     const setLogPopUp = useSetRecoilState(logoutpopup)
 
     const navigate = useNavigate();
-
-    React.useEffect(() => {
-        async function Authorization() {
-            const token =localStorage.getItem('token')
-            if (token) {
-                try {
-                    await axios({
-                        url: "http://localhost:3000/",
-                        method: "GET",
-                        headers: {
-                            'authorization': `Bearer ${JSON.parse(token ?? '')}`
-                        }
-                    })
-                }
-                catch (error) {
-                    console.error(error);
-                }
-            } else {
-                console.log("No token found");
-            }
-        }
-        Authorization();
-    }, []);
 
     function handleChange(event: any) {
         const { name, value } = event.target;
@@ -171,14 +148,16 @@ function Select() {
                         className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md cursor-pointer hover:bg-blue-700"
                     />
             </form>
-            <div className="fixed bottom-4 right-4">
-                <button
-                    onClick={() => navigate('/pastquizes')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                >
-                    Past Quizzes
-                </button>
-            </div>
+            { isLoggedin &&
+                <div className="fixed bottom-4 right-4">
+                    <button
+                        onClick={() => navigate('/pastquizes')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        Past Quizzes
+                    </button>
+                </div>
+            }
             <LogoutPopUp />
         </div>
     );

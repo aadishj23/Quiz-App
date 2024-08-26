@@ -24,11 +24,19 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     })
 })
 
-app.get('/',auth, (req:Request, res:Response) => {
-    res.json({
-        message: 'You are authorized',
-        userID: req.body.userID,
-    });
+app.get('/pastdata',auth, async (req: Request, res: Response) => {
+    try {
+        const { userID } = req.body;
+        const data = await prisma.quizData.findMany({
+            where: {
+                userId: userID,
+            },
+        });
+        res.send(data);
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).send('An error occurred while fetching data.');
+    }
 });
 
 app.post('/fetchdata',auth, fetch, async (req: Request, res: Response) => {
