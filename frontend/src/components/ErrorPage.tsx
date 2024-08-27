@@ -9,7 +9,7 @@ function ErrorPage() {
             navigate('/');
         }, 5000);
 
-        return () => clearTimeout(timer); // Cleanup the timer on component unmount
+        return () => clearTimeout(timer); 
     }, [navigate]);
 
     return (

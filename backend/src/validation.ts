@@ -10,7 +10,6 @@ const signupSchema = zod.object({
     email: zod.string().email(),
     phone: zod.string().min(10), // change to phone number validation
     password: zod.string().min(10),
-    confirmPassword: zod.string().min(10),
 });
 
 export { signinSchema, signupSchema };

@@ -7,6 +7,7 @@ import { useState } from "react"
 function Signup() {
     const [signUpData, setSignUpData] = useRecoilState(signup)
     const [isLoading, setIsLoading] = useState(false)
+    const [err,setErr] = useState("")
 
     const navigate = useNavigate()
 
@@ -20,27 +21,30 @@ function Signup() {
 
     async function handleSubmit(event: any) {
         event.preventDefault()
-        setIsLoading(true)
-        try {
-            await axios({
-                url: "https://quiz-app-d0dc.onrender.com/signup",
-                method: "POST",
-                data: JSON.stringify({
-                    name: signUpData.Name,
-                    email: signUpData.Email,
-                    phone: signUpData.Phone,
-                    password: signUpData.Password,
-                    confirmPassword: signUpData.ConfirmPassword
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-            navigate('/signin')
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setIsLoading(false)
+        if(signUpData.Password === signUpData.ConfirmPassword){
+            setIsLoading(true)
+            try {
+                await axios({
+                    url: "https://quiz-app-d0dc.onrender.com/signup",
+                    method: "POST",
+                    data: JSON.stringify({
+                        name: signUpData.Name,
+                        email: signUpData.Email,
+                        phone: signUpData.Phone,
+                        password: signUpData.Password,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                navigate('/signin')
+            } catch (error) {
+                console.error(error)
+            } finally {
+                setIsLoading(false)
+            }
+        } else {
+            setErr("Password and Confirm Password doesn't match")
         }
     }
 
@@ -64,6 +68,7 @@ function Signup() {
                     value={signUpData.Name}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
                 <label
                     htmlFor="email"
@@ -79,6 +84,7 @@ function Signup() {
                     value={signUpData.Email}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
                 <label
                     htmlFor="phone"
@@ -94,6 +100,7 @@ function Signup() {
                     value={signUpData.Phone || ""}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
                 <label
                     htmlFor="password"
@@ -109,6 +116,7 @@ function Signup() {
                     value={signUpData.Password}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
                 <label
                     htmlFor="cnfpswd"
@@ -124,7 +132,9 @@ function Signup() {
                     value={signUpData.ConfirmPassword}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
+                {err && <p className="text-red-500 mb-4">{err}</p>}
                 <button
                     type="submit"
                     className={`w-full py-2 rounded-lg text-white transition duration-200 ${isLoading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}

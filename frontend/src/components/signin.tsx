@@ -9,6 +9,7 @@ function Signin() {
     const [signInData, setSignInData] = useRecoilState(signin)
     const setLoggedIn = useSetRecoilState(loggedin)
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState('')
 
     const navigate = useNavigate()
 
@@ -41,6 +42,7 @@ function Signin() {
             navigate('/')
         } catch (error) {
             console.error(error)
+            setError('Invalid Credentials')
         } finally {
             setIsLoading(false)
         }
@@ -66,6 +68,7 @@ function Signin() {
                     value={signInData.Name}
                     onChange={handleChangeSignIn}
                     className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
                 <label
                     htmlFor="pswd"
@@ -81,7 +84,11 @@ function Signin() {
                     value={signInData.Password}
                     onChange={handleChangeSignIn}
                     className="w-full px-3 py-2 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
                 />
+                {error && (
+                    <p className="text-red-500 mb-4">{error}</p>
+                )}
                 <button
                     type="submit"
                     className={`w-full py-2 rounded-lg text-white transition duration-200 ${isLoading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}

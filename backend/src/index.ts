@@ -116,15 +116,12 @@ app.delete('/deletedata',auth, async (req: Request, res: Response) => {
 });
 
 app.post('/signup', async (req:Request, res:Response) => {
-    const { name, email, phone, password, confirmPassword } = req.body;
+    const { name, email, phone, password } = req.body;
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).send(parsedData.error);
     } else{
-        if (password !== confirmPassword) {
-            res.status(400).send("Password and Confirm Password must be the same");
-        } else {
-            const hashedPassword = await bycrypt.hash(password, 10);
+        const hashedPassword = await bycrypt.hash(password, 10);
             const user = await prisma.user.create({
                 data: {
                   id: nanoid(),      
@@ -138,7 +135,6 @@ app.post('/signup', async (req:Request, res:Response) => {
                 "message": "User created successfully", 
                 "user": user 
             });
-        }
     }
 });
 
@@ -153,22 +149,26 @@ app.post('/signin', async (req:Request, res:Response) => {
                 email: email
             }
         });
-        const isPasswordValid = user ? await bycrypt.compare(password, user.password) : false;
-        if (isPasswordValid) {
-            const jwtSecret = process.env.JWT_SECRET;
-            if (jwtSecret) {
-                const token = jwt.sign({
-                userid: user?.id,
-                }, jwtSecret, { expiresIn: '10d' });
-                res.send({
-                    token,
-                    name: user?.name,
-                });
+        if(user){
+            const isPasswordValid = await bycrypt.compare(password, user.password);
+            if (isPasswordValid) {
+                const jwtSecret = process.env.JWT_SECRET;
+                if (jwtSecret) {
+                    const token = jwt.sign({
+                    userid: user?.id,
+                    }, jwtSecret, { expiresIn: '10d' });
+                    res.send({
+                        token,
+                        name: user?.name,
+                    });
+                } else {
+                    res.status(500).send("JWT secret is not defined");
+                }
             } else {
-                res.status(500).send("JWT secret is not defined");
+                res.status(401).send("Invalid password");
             }
         } else {
-            res.status(401).send("Invalid email or password");
+            res.status(401).send("User not found");
         }
     }
 });
