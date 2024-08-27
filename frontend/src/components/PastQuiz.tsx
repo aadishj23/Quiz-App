@@ -2,6 +2,7 @@
 import { pastdata } from "../store/atoms/pastdata"
 import { datastore } from "../store/atoms/datastore"
 import { submit } from "../store/atoms/submit"
+import { useState,useEffect } from "react"
 import { useRecoilState ,useSetRecoilState} from "recoil"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
@@ -11,10 +12,39 @@ function PastQuiz() {
   const setSubmitState = useSetRecoilState(submit)
   const setDataStore = useSetRecoilState(datastore)
   const [pastData, setPastData] = useRecoilState(pastdata)
+  const [loading, setLoading] = useState(false)
+  const [pastLoading, setPastLoading] = useState(false)
+  const [message, setMessage] = useState('')
   const navigate = useNavigate()
+
+  const handlePastData = async () => {
+    try {
+      setPastLoading(true)
+      setMessage('Data is loading...')
+        const response = await axios({
+            url: "https://quiz-app-d0dc.onrender.com/pastdata",
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+            },
+        });
+        sessionStorage.setItem('pastdata', JSON.stringify(response.data));
+        setPastData(response.data);
+    } catch (err) {
+        setMessage('Failed to fetch past data. Please try again.');
+    } finally {
+        setPastLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    handlePastData()
+  }, [])
 
   const deleteQuiz = async(id: number) => {
     try {
+      setLoading(true)
       await axios({
         url: "https://quiz-app-d0dc.onrender.com/deletedata",
         method: "DELETE",
@@ -38,6 +68,8 @@ function PastQuiz() {
       setPastData(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -69,7 +101,7 @@ function PastQuiz() {
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
             onClick={() => deleteQuiz(item.id)}
           >
-            Delete
+            {loading? "Deleting..." : "Delete"}
           </button>
           <button 
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
@@ -107,7 +139,9 @@ function PastQuiz() {
           {pastQuiz}
         </div>
       ) : (
-        <p className="text-center text-gray-500">No past quizzes available.</p>
+        <p className="text-center text-gray-500">
+          {pastLoading ? message : "No past quizzes available."}
+        </p>
       )}
       <div className="flex justify-center mt-8">
         <button

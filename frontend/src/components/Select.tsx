@@ -5,7 +5,6 @@ import { datastore } from '../store/atoms/datastore';
 import { loggedin } from '../store/atoms/loggedin';
 import { useNavigate } from 'react-router-dom';
 import { logoutpopup } from '../store/atoms/logoutpopup';
-import { pastdata } from '../store/atoms/pastdata';
 import LogoutPopUp from './LogoutPopUp';
 import axios from 'axios';
 
@@ -14,7 +13,6 @@ function Select() {
     const isLoggedin = useRecoilValue(loggedin);
     const setDataStore = useSetRecoilState(datastore);
     const setLogPopUp = useSetRecoilState(logoutpopup);
-    const setPastData = useSetRecoilState(pastdata);
     const navigate = useNavigate();
     
     const [loading, setLoading] = useState(false);
@@ -30,48 +28,36 @@ function Select() {
 
     async function handleSubmit(event: any) {
         event.preventDefault();
-        setLoading(true);
-        setError('');
-        try {
-            const response = await axios({
-                url: "https://quiz-app-d0dc.onrender.com/fetchdata",
-                method: "POST",
-                data: JSON.stringify({
-                    category: data.category,
-                    difficulty: data.difficulty,
-                    questioncount: data.questioncount,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
-                },
-            });
-            if (response.data.length > 0) {
-                setDataStore(response.data[0].data);
-            }
-            sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
-            navigate('/question');
-        } catch (err) {
+        if(isLoggedin === false) {
             setError('Please Login First Before Starting the Quiz');
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const handlePastData = async () => {
-        try {
-            const response = await axios({
-                url: "https://quiz-app-d0dc.onrender.com/pastdata",
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
-                },
-            });
-            sessionStorage.setItem('pastdata', JSON.stringify(response.data));
-            setPastData(response.data);
-        } catch (err) {
-            setError('Failed to fetch past data. Please try again.');
+            return;
+        } else {
+            setLoading(true);
+            setError('');
+            try {
+                const response = await axios({
+                    url: "https://quiz-app-d0dc.onrender.com/fetchdata",
+                    method: "POST",
+                    data: JSON.stringify({
+                        category: data.category,
+                        difficulty: data.difficulty,
+                        questioncount: data.questioncount,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+                    },
+                });
+                if (response.data.length > 0) {
+                    setDataStore(response.data[0].data);
+                }
+                sessionStorage.setItem('quizid', JSON.stringify(response.data[0].id));
+                navigate('/question');
+            } catch (err) {
+                setError('Please Login First Before Starting the Quiz');
+            } finally {
+                setLoading(false);
+            }
         }
     }
 
@@ -181,7 +167,6 @@ function Select() {
                     <button
                         onClick={() => {
                             navigate('/pastquizes');
-                            handlePastData();
                         }}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                     >
