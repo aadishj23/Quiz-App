@@ -12,29 +12,29 @@ function PastQuiz() {
   const setSubmitState = useSetRecoilState(submit)
   const setDataStore = useSetRecoilState(datastore)
   const [pastData, setPastData] = useRecoilState(pastdata)
-  const [loading, setLoading] = useState(false)
   const [pastLoading, setPastLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean }>({});  
   const navigate = useNavigate()
 
   const handlePastData = async () => {
     try {
       setPastLoading(true)
       setMessage('Data is loading...')
-        const response = await axios({
-            url: "https://quiz-app-d0dc.onrender.com/pastdata",
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
-            },
-        });
-        sessionStorage.setItem('pastdata', JSON.stringify(response.data));
-        setPastData(response.data);
+      const response = await axios({
+        url: "https://quiz-app-d0dc.onrender.com/pastdata",
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+        },
+      });
+      sessionStorage.setItem('pastdata', JSON.stringify(response.data));
+      setPastData(response.data);
     } catch (err) {
-        setMessage('Failed to fetch past data. Please try again.');
+      setMessage('Failed to fetch past data. Please try again.');
     } finally {
-        setPastLoading(false)
+      setPastLoading(false)
     }
   }
 
@@ -44,7 +44,10 @@ function PastQuiz() {
 
   const deleteQuiz = async(id: number) => {
     try {
-      setLoading(true)
+      setLoadingStates(prevState => ({
+        ...prevState,
+        [id]: true
+      }));
       await axios({
         url: "https://quiz-app-d0dc.onrender.com/deletedata",
         method: "DELETE",
@@ -69,11 +72,16 @@ function PastQuiz() {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false)
+      setLoadingStates(prevState => ({
+        ...prevState,
+        [id]: false
+      }));
     }
   }
 
   const pastQuiz = pastData.map((item: any, index: number) => {
+    const isLoading = loadingStates[item.id] || false;
+
     return (
       <div key={item.id} className="p-6 bg-white rounded-lg shadow-lg mb-6 border border-gray-200 hover:shadow-xl transition-shadow">
         <div className="flex justify-between items-center mb-4">
@@ -101,7 +109,7 @@ function PastQuiz() {
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
             onClick={() => deleteQuiz(item.id)}
           >
-            {loading? "Deleting..." : "Delete"}
+            {isLoading ? "Deleting..." : "Delete"}
           </button>
           <button 
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded transition-colors duration-200 ease-in-out"
