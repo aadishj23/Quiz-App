@@ -26,7 +26,7 @@ function Signin() {
         setIsLoading(true)
         try {
             const response = await axios({
-                url: "https://quiz-app-d0dc.onrender.com/signin",
+                url: "13.127.237.170/signin",
                 method: "POST",
                 data: JSON.stringify({
                     email: signInData.Name,
