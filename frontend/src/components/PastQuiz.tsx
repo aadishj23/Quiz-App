@@ -22,7 +22,7 @@ function PastQuiz() {
       setPastLoading(true)
       setMessage('Data is loading...')
       const response = await axios({
-        url: "http://3.108.156.104/pastdata",
+        url: "https://quiz-app-d0dc.onrender.com/pastdata",
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ function PastQuiz() {
         [id]: true
       }));
       await axios({
-        url: "http://3.108.156.104/deletedata",
+        url: "https://quiz-app-d0dc.onrender.com/deletedata",
         method: "DELETE",
         data: JSON.stringify({
           quizid: id
@@ -60,7 +60,7 @@ function PastQuiz() {
         }
       });
       const response = await axios({
-        url: "http://3.108.156.104/pastdata",
+        url: "https://quiz-app-d0dc.onrender.com/pastdata",
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
