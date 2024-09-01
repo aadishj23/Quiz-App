@@ -56,7 +56,7 @@ function Question() {
         const token = localStorage.getItem('token');
         (async () => {
           await axios({
-            url: "https://quiz-app-d0dc.onrender.com/updatedata",
+            url: "http://3.108.156.104/updatedata",
             method: "PUT",
             data: JSON.stringify({
               quizid: sessionStorage.getItem('quizid'),
