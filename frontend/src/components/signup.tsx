@@ -25,7 +25,7 @@ function Signup() {
             setIsLoading(true)
             try {
                 await axios({
-                    url: "https://quiz-app-d0dc.onrender.com/signup",
+                    url: `${import.meta.env.VITE_BACKEND_URL}/signup`,
                     method: "POST",
                     data: JSON.stringify({
                         name: signUpData.Name,

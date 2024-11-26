@@ -36,7 +36,7 @@ function Select() {
             setError('');
             try {
                 const response = await axios({
-                    url: "https://quiz-app-d0dc.onrender.com/fetchdata",
+                    url: `${import.meta.env.VITE_BACKEND_URL}/fetchdata`,
                     method: "POST",
                     data: JSON.stringify({
                         category: data.category,
