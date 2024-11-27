@@ -42,7 +42,7 @@ https://quizzical.aadish.tech/
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/quizzical.git
+   git clone https://github.com/aadishj23/quizzical.git
    cd quizzical
    ```
 
@@ -50,7 +50,7 @@ https://quizzical.aadish.tech/
 
    ```bash
    cd frontend
-   npm install
+   npm run dev
    ```
 
 3. Install backend dependencies:
