@@ -29,6 +29,38 @@ https://quizzical.aadish.tech/
 - Multiplayer quiz mode for interactive competition.
 - Integration with educational platforms for broader reach.
 
+## Pages
+
+### 1. Home
+
+![Home](https://drive.google.com/uc?id=1qpmiAxgkh4WmqVDxkajyCAAKoh38BkVD)
+
+
+### 2. SignIn
+
+![SignIn](https://drive.google.com/uc?id=1wXT5rHg4x-663DasRAPq8woqvzfRnYJu)
+
+
+### 3. SignUp
+
+![SignUp](https://drive.google.com/uc?id=1h8SKYr6LpITt_fumzzJ40kAD37eIhr4A)
+
+
+### 4. Quiz Ongoing
+
+![Quiz Ongoing](https://drive.google.com/uc?id=1NS3vD3sInYVbzcYtGt7XMTaB_zCGzbca)
+
+
+### 5. Quiz Result
+
+![Quiz Result](https://drive.google.com/uc?id=1SkWzV2BtRzawVzbCK2db5RWhi_BPG47s)
+
+
+### 6. Past Quizzes
+
+![Past Quizzes](https://drive.google.com/uc?id=133Zo8KZx5FLw5OzL7MjcyrAoabxbJD0w)
+
+
 ## Setup
 
 ### Prerequisites
