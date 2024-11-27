@@ -50,7 +50,7 @@ https://quizzical.aadish.tech/
 
    ```bash
    cd frontend
-   npm run dev
+   npm install
    ```
 
 3. Install backend dependencies:
