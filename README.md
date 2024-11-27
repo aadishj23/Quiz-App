@@ -92,7 +92,7 @@ https://quizzical.aadish.tech/
 
    ```bash
    cd frontend
-   npm start
+   npm run dev
    ```
 
 The application should now be running on `http://localhost:3000` (frontend) and `http://localhost:5000` (backend).
