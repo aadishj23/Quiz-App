@@ -17,6 +17,16 @@ function PastQuiz() {
   const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean }>({});  
   const navigate = useNavigate()
 
+  // Helper function to safely parse JSON from localStorage
+  const safeJsonParse = (key: string, defaultValue: string = '') => {
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
   const handlePastData = async () => {
     try {
       setPastLoading(true)
@@ -26,7 +36,7 @@ function PastQuiz() {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+          'Authorization': `Bearer ${safeJsonParse('token')}`
         },
       });
       sessionStorage.setItem('pastdata', JSON.stringify(response.data));
@@ -56,7 +66,7 @@ function PastQuiz() {
         }),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+          'Authorization': `Bearer ${safeJsonParse('token')}`
         }
       });
       const response = await axios({
@@ -64,7 +74,7 @@ function PastQuiz() {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+            'Authorization': `Bearer ${safeJsonParse('token')}`
           },
       });
       sessionStorage.setItem('pastdata', JSON.stringify(response.data));

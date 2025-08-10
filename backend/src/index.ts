@@ -24,6 +24,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     })
 })
 
+app.get('/',(req:Request,res:Response)=>{
+    res.send("Hello Quizzical User");
+});
+
 app.get('/pastdata',auth, async (req: Request, res: Response) => {
     try {
         const { userID } = req.body;

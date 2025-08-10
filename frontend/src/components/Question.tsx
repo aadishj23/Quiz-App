@@ -15,6 +15,16 @@ function Question() {
 
     const navigate = useNavigate();
 
+    // Helper function to safely parse JSON from localStorage
+    const safeJsonParse = (key: string, defaultValue: string = '') => {
+        try {
+            const value = localStorage.getItem(key);
+            return value ? JSON.parse(value) : defaultValue;
+        } catch {
+            return defaultValue;
+        }
+    };
+
     React.useEffect(() => {
       sessionStorage.setItem('submit', JSON.stringify(submitState));
     }, [submitState]);
@@ -53,7 +63,6 @@ function Question() {
     React.useEffect(() => {
       if (submitState) {
         const score = calculateScore();
-        const token = localStorage.getItem('token');
         (async () => {
           await axios({
             url: `${import.meta.env.VITE_BACKEND_URL}/updatedata`,
@@ -65,7 +74,7 @@ function Question() {
             }),
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${JSON.parse(token ?? '')}`,
+              'Authorization': `Bearer ${safeJsonParse('token')}`,
             },
           });
         })();

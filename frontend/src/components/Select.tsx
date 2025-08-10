@@ -18,6 +18,16 @@ function Select() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // Helper function to safely parse JSON from localStorage
+    const safeJsonParse = (key: string, defaultValue: string = '') => {
+        try {
+            const value = localStorage.getItem(key);
+            return value ? JSON.parse(value) : defaultValue;
+        } catch {
+            return defaultValue;
+        }
+    };
+
     function handleChange(event: any) {
         const { name, value } = event.target;
         setData((prevData) => ({
@@ -45,7 +55,7 @@ function Select() {
                     }),
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') ?? '')}`
+                        'Authorization': `Bearer ${safeJsonParse('token')}`
                     },
                 });
                 if (response.data.length > 0) {
@@ -81,7 +91,7 @@ function Select() {
             ):(
                 <div className="absolute top-4 left-4 right-4 flex justify-between items-center p-2">
                     <p className="text-lg font-semibold text-gray-800">
-                        Welcome, <span className="font-bold">{JSON.parse(localStorage.getItem('name') ?? '')}</span>
+                        Welcome, <span className="font-bold">{safeJsonParse('name')}</span>
                     </p>
                     <button 
                         onClick={() => setLogPopUp(true)}
