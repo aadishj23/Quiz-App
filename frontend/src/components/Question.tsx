@@ -91,32 +91,74 @@ function Question() {
     }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center space-y-8">
-        <QuestionMap />
-        { submitState === false ? 
-          (<button 
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button> )
-          : 
-          (<div className="flex flex-col items-center space-y-4">
-            <p className="text-2xl font-bold text-gray-800 bg-white p-4 rounded-lg shadow-md border border-gray-200">
-              Your total score is 
-              <span className="text-blue-600 font-extrabold text-3xl ml-2">
-                {calculateScore()}
-              </span>
-            </p>            
-            <button 
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105"
-              onClick={handleHome}
-            >
-              Home
-            </button> 
-          </div>)
-        }
-      <PopUp />  
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+        <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                    Quiz Time!
+                </h1>
+                <p className="text-gray-600 text-lg">
+                    {submitState ? 'Quiz completed! Here are your results.' : 'Answer all questions to complete the quiz.'}
+                </p>
+            </div>
+
+            {/* Questions */}
+            <div className="mb-8">
+                <QuestionMap />
+            </div>
+
+            {/* Action Buttons */}
+            { submitState === false ? (
+                <div className="text-center">
+                    <button 
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 font-bold text-lg"
+                        onClick={handleSubmit}
+                    >
+                        🚀 Submit Quiz
+                    </button>
+                </div>
+            ) : (
+                <div className="text-center space-y-6">
+                    {/* Score Display */}
+                    <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-white/20 max-w-md mx-auto">
+                        <div className="text-center">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full shadow-lg mb-4">
+                                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
+                            <p className="text-gray-600 mb-4">Your total score is</p>
+                            <div className="text-6xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                                {calculateScore()}
+                            </div>
+                            <p className="text-gray-500 text-sm mt-2">
+                                out of {dataStore.length} questions
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button 
+                            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 font-bold text-lg"
+                            onClick={handleHome}
+                        >
+                            🏠 Back to Home
+                        </button>
+                        <button 
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 font-bold text-lg"
+                            onClick={() => navigate('/pastquizes')}
+                        >
+                            📚 View Past Quizzes
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+        
+        <PopUp />
     </div>
   )
 }
