@@ -72,7 +72,6 @@ function QuestionMap() {
                 
                 const isSelected = item.is_held?.[`${key}_held`];
                 const isCorrect = item.correct_answers[`${key}_correct`] === "true";
-                const isSubmitted = submitState;
                 
                 let buttonClasses = "p-4 w-full rounded-2xl border-2 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50 font-medium text-left";
                 
