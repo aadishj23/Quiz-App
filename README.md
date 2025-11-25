@@ -3,7 +3,7 @@
 Quizzical is a web-based platform offering users a variety of quizzes on technical topics, enabling them to test and enhance their knowledge. With a rich set of features, Quizzical provides an engaging, interactive, and personalized learning experience.
 
 ## Website
-https://quizzical.aadish.tech/
+https://quizzical.aadishjain.dev/
 
 ## Features
 
